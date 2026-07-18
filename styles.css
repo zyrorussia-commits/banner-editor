@@ -1,16 +1,12 @@
 :root {
   --bg: #0d1117;
-  --bg-soft: #141b25;
   --panel: rgba(16, 22, 31, 0.94);
   --panel-2: rgba(20, 27, 37, 0.96);
   --line: rgba(255, 255, 255, 0.08);
-  --line-strong: rgba(255, 255, 255, 0.16);
   --text: #f5f7fb;
   --muted: #96a2b4;
-  --accent: #ff4b63;
   --radius-xl: 32px;
   --radius-lg: 24px;
-  --radius-md: 18px;
   --shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
 }
 
@@ -84,17 +80,14 @@ input {
 }
 
 .hero h1 {
-  max-width: 760px;
   font-family: "Unbounded", sans-serif;
-  font-size: clamp(1.8rem, 3vw, 3.2rem);
+  font-size: clamp(1.8rem, 3vw, 3rem);
   line-height: 1.08;
 }
 
 .hero p {
   margin: 14px 0 0;
-  max-width: 640px;
   color: var(--muted);
-  font-size: 1rem;
 }
 
 .hero-actions {

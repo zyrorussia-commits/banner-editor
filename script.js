@@ -1,10 +1,13 @@
 const canvas = document.getElementById("promoCanvas");
 const ctx = canvas.getContext("2d");
 
+const defaultPromo = "/promo > 2";
+const defaultFooter = "скачать игру в тгк @crmp_zyro";
+
 const state = {
   style: null,
-  promo: "/promo > 2",
-  footer: "скачать игру в тгк @crmp_zyro"
+  promo: defaultPromo,
+  footer: defaultFooter
 };
 
 const styles = {
@@ -89,24 +92,19 @@ function drawEmptyState() {
   ctx.lineWidth = 2;
   ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
 
-  ctx.fillStyle = "rgba(255,255,255,0.16)";
-  ctx.fillRect(120, 112, 320, 12);
-  ctx.fillRect(120, 144, 220, 12);
-  ctx.fillRect(120, 176, 180, 12);
-
   ctx.fillStyle = "#f5f7fb";
   ctx.font = "700 64px Manrope, sans-serif";
-  ctx.fillText("Выбери стиль справа", 120, 288);
+  ctx.fillText("Выбери стиль справа", 120, 280);
 
   ctx.font = "500 30px Manrope, sans-serif";
   ctx.fillStyle = "rgba(255,255,255,0.62)";
-  ctx.fillText("После клика появится готовый баннер для Москвы", 120, 360);
+  ctx.fillText("Стиль не должен включаться сам до клика", 120, 344);
 
   ctx.fillStyle = "rgba(255,255,255,0.4)";
   ctx.fillRect(120, 470, 1160, 1);
   ctx.font = "700 34px Manrope, sans-serif";
   ctx.fillStyle = "rgba(255,255,255,0.82)";
-  ctx.fillText("скачать игру в тгк @crmp_zyro", 120, 514);
+  ctx.fillText(defaultFooter, 120, 514);
 }
 
 function drawBanner() {
@@ -193,8 +191,8 @@ function render() {
 
 function resetState() {
   state.style = null;
-  state.promo = "/promo > 2";
-  state.footer = "скачать игру в тгк @crmp_zyro";
+  state.promo = defaultPromo;
+  state.footer = defaultFooter;
   render();
 }
 
@@ -214,12 +212,12 @@ function bindEvents() {
   });
 
   elements.promoInput.addEventListener("input", (event) => {
-    state.promo = event.target.value || "/promo > 2";
+    state.promo = event.target.value || defaultPromo;
     render();
   });
 
   elements.footerInput.addEventListener("input", (event) => {
-    state.footer = event.target.value || "скачать игру в тгк @crmp_zyro";
+    state.footer = event.target.value || defaultFooter;
     render();
   });
 
