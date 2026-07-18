@@ -1,101 +1,102 @@
-const presets = {
-  "1200x300": { width: 1200, height: 300 },
-  "1200x500": { width: 1200, height: 500 },
-  "1000x420": { width: 1000, height: 420 },
-  "1600x900": { width: 1600, height: 900 }
+const canvas = document.getElementById("promoCanvas");
+const ctx = canvas.getContext("2d");
+
+const state = {
+  style: "style1",
+  server: "Москва",
+  shape: "square",
+  element: "bear",
+  showBackground: true,
+  backgroundColor: "#070911",
+  promoCode: "/promo > 2",
+  footerText: "скачать игру в тгк - @crmp_rage",
+  customTitle: "",
+  uploadedImage: null
 };
 
-const themes = {
-  ember: {
-    backgroundTop: "#170f0c",
-    backgroundBottom: "#090807",
-    glowA: "rgba(255, 110, 53, 0.28)",
-    glowB: "rgba(255, 173, 93, 0.18)",
-    text: "#fff3ea",
-    muted: "rgba(255, 240, 231, 0.7)",
-    panel: "rgba(255, 255, 255, 0.06)"
+const stylePresets = {
+  style1: {
+    backgroundTop: "#161d39",
+    backgroundBottom: "#173258",
+    splashMain: "rgba(255, 19, 19, 0.92)",
+    splashDark: "rgba(0, 0, 0, 0.94)",
+    accent: "#ff2950",
+    textMain: "#ffffff",
+    textAccent: "#ff4a72"
   },
-  carbon: {
-    backgroundTop: "#101214",
-    backgroundBottom: "#090a0b",
-    glowA: "rgba(210, 210, 210, 0.16)",
-    glowB: "rgba(122, 122, 122, 0.14)",
-    text: "#f3f6f7",
-    muted: "rgba(243, 246, 247, 0.7)",
-    panel: "rgba(255, 255, 255, 0.05)"
+  style2: {
+    backgroundTop: "#171421",
+    backgroundBottom: "#2a1e43",
+    splashMain: "rgba(119, 54, 255, 0.88)",
+    splashDark: "rgba(8, 8, 16, 0.92)",
+    accent: "#8a58ff",
+    textMain: "#ffffff",
+    textAccent: "#9a6bff"
   },
-  ocean: {
-    backgroundTop: "#07151f",
-    backgroundBottom: "#050a12",
-    glowA: "rgba(0, 191, 255, 0.24)",
-    glowB: "rgba(74, 222, 255, 0.16)",
-    text: "#eaf9ff",
-    muted: "rgba(234, 249, 255, 0.72)",
-    panel: "rgba(255, 255, 255, 0.05)"
+  style3: {
+    backgroundTop: "#0c1824",
+    backgroundBottom: "#143c4e",
+    splashMain: "rgba(0, 201, 255, 0.88)",
+    splashDark: "rgba(0, 14, 18, 0.92)",
+    accent: "#31d8ff",
+    textMain: "#ebffff",
+    textAccent: "#59ecff"
   },
-  forest: {
-    backgroundTop: "#0d150e",
-    backgroundBottom: "#070b08",
-    glowA: "rgba(61, 208, 116, 0.24)",
-    glowB: "rgba(163, 242, 119, 0.14)",
-    text: "#efffee",
-    muted: "rgba(239, 255, 238, 0.72)",
-    panel: "rgba(255, 255, 255, 0.05)"
+  style4: {
+    backgroundTop: "#1f1712",
+    backgroundBottom: "#453117",
+    splashMain: "rgba(255, 140, 36, 0.9)",
+    splashDark: "rgba(15, 10, 5, 0.92)",
+    accent: "#ff9f2e",
+    textMain: "#fffaf2",
+    textAccent: "#ffb556"
   }
 };
 
-const titleSuggestions = [
-  "ZYRO RUSSIA",
-  "FORUM DESIGN PACK",
-  "OFFICIAL COMMUNITY",
-  "MEDIA DEPARTMENT",
-  "EVENT BANNER"
-];
-
-const subtitleSuggestions = [
-  "Редактор баннеров для форума и игровых тем",
-  "Шапки, карточки и промо в одном инструменте",
-  "Быстрый конструктор для публикаций и анонсов",
-  "Минималистичный редактор для визуала проекта"
-];
-
-const badgeSuggestions = [
-  "OFFICIAL TOOL",
-  "MEDIA KIT",
-  "SUMMER 2026",
-  "DESIGN UNIT",
-  "ZYRO TEAM"
-];
-
-const els = {
-  canvas: document.getElementById("bannerCanvas"),
-  preset: document.getElementById("bannerPreset"),
-  title: document.getElementById("bannerTitle"),
-  subtitle: document.getElementById("bannerSubtitle"),
-  badge: document.getElementById("bannerBadge"),
-  theme: document.getElementById("themePreset"),
-  accent: document.getElementById("accentColor"),
-  shapeOpacity: document.getElementById("shapeOpacity"),
-  grainStrength: document.getElementById("grainStrength"),
-  titleScale: document.getElementById("titleScale"),
-  subtitleScale: document.getElementById("subtitleScale"),
-  titleAlign: document.getElementById("titleAlign"),
-  showFrame: document.getElementById("showFrame"),
-  sizeIndicator: document.getElementById("sizeIndicator"),
-  downloadButton: document.getElementById("downloadPngButton"),
-  randomizeButton: document.getElementById("randomizeButton"),
-  resetButton: document.getElementById("resetButton")
+const serverMeta = {
+  "Москва": {
+    title: "SERVER: MOSCOW",
+    origin: "CRMP MOSCOW"
+  },
+  "Питер": {
+    title: "SERVER: PITER",
+    origin: "CRMP SAINT-P"
+  },
+  "Екатеринбург": {
+    title: "SERVER: EKB",
+    origin: "CRMP EKB"
+  }
 };
 
-const ctx = els.canvas.getContext("2d");
+const els = {
+  downloadButton: document.getElementById("downloadButton"),
+  resetButton: document.getElementById("resetButton"),
+  shuffleButton: document.getElementById("shuffleButton"),
+  backgroundToggle: document.getElementById("backgroundToggle"),
+  styleButtons: Array.from(document.querySelectorAll("[data-style]")),
+  serverButtons: Array.from(document.querySelectorAll("[data-server]")),
+  shapeButtons: Array.from(document.querySelectorAll("[data-shape]")),
+  elementButtons: Array.from(document.querySelectorAll("[data-element]")),
+  swatches: Array.from(document.querySelectorAll("[data-bg]")),
+  promoCodeInput: document.getElementById("promoCodeInput"),
+  footerInput: document.getElementById("footerInput"),
+  addTextButton: document.getElementById("addTextButton"),
+  addElementButton: document.getElementById("addElementButton"),
+  formatButton: document.getElementById("formatButton"),
+  backgroundUpload: document.getElementById("backgroundUpload")
+};
+
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
 
 function hexToRgb(hex) {
-  const safeHex = hex.replace("#", "");
-  const value = Number.parseInt(safeHex, 16);
+  const raw = hex.replace("#", "");
+  const parsed = Number.parseInt(raw, 16);
   return {
-    r: (value >> 16) & 255,
-    g: (value >> 8) & 255,
-    b: value & 255
+    r: (parsed >> 16) & 255,
+    g: (parsed >> 8) & 255,
+    b: parsed & 255
   };
 }
 
@@ -104,270 +105,469 @@ function rgba(hex, alpha) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-function clamp(value, min, max) {
-  return Math.min(max, Math.max(min, value));
-}
-
 function randomFrom(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
 
-function resizeCanvas() {
-  const selected = presets[els.preset.value];
-  els.canvas.width = selected.width;
-  els.canvas.height = selected.height;
-  els.sizeIndicator.textContent = `${selected.width} x ${selected.height}`;
+function fitCanvas() {
+  canvas.width = 1400;
+  canvas.height = 780;
 }
 
-function drawBackground(width, height, theme, accentColor, glowStrength) {
-  const baseGradient = ctx.createLinearGradient(0, 0, 0, height);
-  baseGradient.addColorStop(0, theme.backgroundTop);
-  baseGradient.addColorStop(1, theme.backgroundBottom);
-  ctx.fillStyle = baseGradient;
-  ctx.fillRect(0, 0, width, height);
+function setActive(buttons, key, value) {
+  buttons.forEach((button) => {
+    button.classList.toggle("active", button.dataset[key] === value);
+  });
+}
 
-  const radialA = ctx.createRadialGradient(width * 0.18, height * 0.12, 0, width * 0.18, height * 0.12, width * 0.34);
-  radialA.addColorStop(0, rgba(accentColor, glowStrength));
-  radialA.addColorStop(1, "rgba(0, 0, 0, 0)");
-  ctx.fillStyle = radialA;
-  ctx.fillRect(0, 0, width, height);
+function drawBackground(preset) {
+  if (!state.showBackground) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    return;
+  }
 
-  const radialB = ctx.createRadialGradient(width * 0.86, height * 0.8, 0, width * 0.86, height * 0.8, width * 0.28);
-  radialB.addColorStop(0, theme.glowB);
-  radialB.addColorStop(1, "rgba(0, 0, 0, 0)");
-  ctx.fillStyle = radialB;
-  ctx.fillRect(0, 0, width, height);
+  const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+  gradient.addColorStop(0, preset.backgroundTop);
+  gradient.addColorStop(1, preset.backgroundBottom);
+  ctx.fillStyle = state.uploadedImage ? state.backgroundColor : gradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+  if (state.uploadedImage) {
+    ctx.save();
+    ctx.globalAlpha = 0.48;
+    ctx.drawImage(state.uploadedImage, 0, 0, canvas.width, canvas.height);
+    ctx.restore();
+
+    const overlay = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    overlay.addColorStop(0, rgba(state.backgroundColor, 0.78));
+    overlay.addColorStop(1, rgba("#07111d", 0.72));
+    ctx.fillStyle = overlay;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  } else {
+    ctx.fillStyle = rgba(state.backgroundColor, 0.35);
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+}
+
+function drawBackdropCloud(preset) {
   ctx.save();
-  ctx.globalAlpha = 0.14;
-  ctx.fillStyle = theme.panel;
+
+  const coreGradient = ctx.createRadialGradient(680, 365, 40, 680, 365, 430);
+  coreGradient.addColorStop(0, "rgba(255,255,255,0.2)");
+  coreGradient.addColorStop(0.18, preset.splashMain);
+  coreGradient.addColorStop(0.46, preset.splashDark);
+  coreGradient.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = coreGradient;
   ctx.beginPath();
-  ctx.roundRect(width * 0.05, height * 0.12, width * 0.9, height * 0.76, Math.min(30, height * 0.08));
+  ctx.ellipse(690, 372, 420, 205, -0.05, 0, Math.PI * 2);
   ctx.fill();
+
+  for (let i = 0; i < 70; i += 1) {
+    const angle = Math.random() * Math.PI * 2;
+    const radiusX = 370 + Math.random() * 180;
+    const radiusY = 115 + Math.random() * 140;
+    const x = 690 + Math.cos(angle) * radiusX;
+    const y = 372 + Math.sin(angle) * radiusY;
+    const size = 4 + Math.random() * 18;
+    ctx.fillStyle = Math.random() > 0.4 ? preset.splashMain : "rgba(0,0,0,0.9)";
+    ctx.beginPath();
+    ctx.arc(x, y, size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.strokeStyle = "rgba(0,0,0,0.75)";
+  ctx.lineWidth = 8;
+  [528, 612, 1006].forEach((x, index) => {
+    ctx.beginPath();
+    ctx.moveTo(x, 525 + index * 8);
+    ctx.lineTo(x + (index === 1 ? -8 : 4), 650 + index * 18);
+    ctx.stroke();
+  });
+
   ctx.restore();
 }
 
-function drawShapes(width, height, accentColor, glowStrength) {
+function drawShapeOverlay(preset) {
   ctx.save();
-  ctx.globalAlpha = clamp(glowStrength + 0.12, 0.18, 0.8);
+  ctx.globalAlpha = 0.22;
+  ctx.fillStyle = rgba(preset.accent, 0.4);
+  ctx.strokeStyle = rgba("#ffffff", 0.18);
+  ctx.lineWidth = 3;
 
-  ctx.fillStyle = rgba(accentColor, 0.32);
-  ctx.beginPath();
-  ctx.roundRect(width * 0.69, height * 0.13, width * 0.2, height * 0.18, height * 0.07);
-  ctx.fill();
+  if (state.shape === "square") {
+    ctx.fillRect(325, 198, 160, 160);
+    ctx.strokeRect(325, 198, 160, 160);
+  }
 
-  ctx.fillStyle = rgba(accentColor, 0.18);
-  ctx.beginPath();
-  ctx.roundRect(width * 0.74, height * 0.36, width * 0.14, height * 0.4, height * 0.07);
-  ctx.fill();
+  if (state.shape === "circle") {
+    ctx.beginPath();
+    ctx.arc(392, 275, 88, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  }
 
-  ctx.strokeStyle = rgba(accentColor, 0.55);
-  ctx.lineWidth = Math.max(2, width * 0.0023);
-  ctx.beginPath();
-  ctx.arc(width * 0.83, height * 0.56, height * 0.17, Math.PI * 0.08, Math.PI * 1.67);
-  ctx.stroke();
+  if (state.shape === "triangle") {
+    ctx.beginPath();
+    ctx.moveTo(390, 162);
+    ctx.lineTo(287, 358);
+    ctx.lineTo(492, 358);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  if (state.shape === "star") {
+    drawStar(392, 275, 95, 42, 5);
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  if (state.shape === "grid") {
+    for (let row = 0; row < 5; row += 1) {
+      for (let col = 0; col < 5; col += 1) {
+        ctx.fillRect(300 + col * 36, 190 + row * 36, 22, 22);
+      }
+    }
+  }
 
   ctx.restore();
 }
 
-function drawFrame(width, height, accentColor) {
-  ctx.save();
-  ctx.strokeStyle = rgba(accentColor, 0.42);
-  ctx.lineWidth = Math.max(2, width * 0.0022);
+function drawStar(cx, cy, outerRadius, innerRadius, points) {
+  let rotation = Math.PI / 2 * 3;
+  const step = Math.PI / points;
   ctx.beginPath();
-  ctx.roundRect(width * 0.026, height * 0.06, width * 0.948, height * 0.88, Math.min(34, height * 0.09));
-  ctx.stroke();
+  ctx.moveTo(cx, cy - outerRadius);
+  for (let i = 0; i < points; i += 1) {
+    ctx.lineTo(cx + Math.cos(rotation) * outerRadius, cy + Math.sin(rotation) * outerRadius);
+    rotation += step;
+    ctx.lineTo(cx + Math.cos(rotation) * innerRadius, cy + Math.sin(rotation) * innerRadius);
+    rotation += step;
+  }
+  ctx.lineTo(cx, cy - outerRadius);
+  ctx.closePath();
+}
+
+function drawElementBadge(preset) {
+  if (state.element === "none") {
+    return;
+  }
+
+  ctx.save();
+  ctx.translate(365, 250);
+  ctx.shadowColor = "rgba(0,0,0,0.45)";
+  ctx.shadowBlur = 18;
+
+  if (state.element === "bear") {
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.moveTo(-65, 18);
+    ctx.lineTo(-22, -42);
+    ctx.lineTo(44, -28);
+    ctx.lineTo(72, 6);
+    ctx.lineTo(36, 54);
+    ctx.lineTo(-26, 54);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = "#111317";
+    ctx.beginPath();
+    ctx.moveTo(-32, -8);
+    ctx.lineTo(6, -28);
+    ctx.lineTo(26, -8);
+    ctx.lineTo(-8, 10);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.strokeStyle = preset.accent;
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(-52, -2);
+    ctx.lineTo(-32, -24);
+    ctx.lineTo(-16, -10);
+    ctx.stroke();
+  }
+
+  if (state.element === "spark") {
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "800 96px Manrope, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("✦", 0, 34);
+  }
+
+  if (state.element === "shield") {
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.moveTo(0, -54);
+    ctx.lineTo(46, -30);
+    ctx.lineTo(32, 42);
+    ctx.lineTo(0, 62);
+    ctx.lineTo(-32, 42);
+    ctx.lineTo(-46, -30);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = preset.accent;
+    ctx.fillRect(-6, -12, 12, 44);
+    ctx.fillRect(-24, 4, 48, 12);
+  }
+
+  if (state.element === "crown") {
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.moveTo(-58, 40);
+    ctx.lineTo(-46, -16);
+    ctx.lineTo(-14, 6);
+    ctx.lineTo(0, -34);
+    ctx.lineTo(14, 6);
+    ctx.lineTo(46, -16);
+    ctx.lineTo(58, 40);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = preset.accent;
+    ctx.fillRect(-54, 40, 108, 10);
+  }
+
   ctx.restore();
 }
 
-function drawText(width, height, theme, accentColor) {
-  const title = (els.title.value || "ZYRO RUSSIA").trim();
-  const subtitle = (els.subtitle.value || "Редактор баннеров для форума и игровых тем").trim();
-  const badge = (els.badge.value || "OFFICIAL TOOL").trim().toUpperCase();
-  const align = els.titleAlign.value;
-  const titleSize = Math.round(height * 0.18 * (Number(els.titleScale.value) / 100));
-  const subtitleSize = Math.round(height * 0.074 * (Number(els.subtitleScale.value) / 100));
-  const badgeSize = Math.round(height * 0.055);
+function drawTexts(preset) {
+  const meta = serverMeta[state.server];
+  const titleText = state.customTitle || meta.title;
 
-  let x = width * 0.09;
-  if (align === "center") x = width * 0.5;
-  if (align === "right") x = width * 0.91;
-
-  ctx.textAlign = align;
+  ctx.save();
   ctx.textBaseline = "top";
 
-  const badgeWidth = ctx.measureText ? Math.max(width * 0.12, badge.length * badgeSize * 0.7) : width * 0.2;
-  const badgeX = align === "left" ? x : align === "center" ? x - badgeWidth / 2 : x - badgeWidth;
-  const badgeY = height * 0.18;
+  ctx.font = "800 62px Manrope, sans-serif";
+  ctx.fillStyle = "#ff2b24";
+  ctx.fillText(state.promoCode, 615, 158);
 
-  ctx.save();
-  ctx.fillStyle = rgba(accentColor, 0.17);
-  ctx.beginPath();
-  ctx.roundRect(badgeX - 16, badgeY - 10, badgeWidth + 32, height * 0.12, height * 0.05);
-  ctx.fill();
-  ctx.restore();
+  ctx.shadowColor = "rgba(0,0,0,0.42)";
+  ctx.shadowBlur = 14;
+  ctx.font = "900 108px Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif";
+  ctx.fillStyle = preset.textMain;
+  ctx.fillText("SERVER:", 420, 240);
 
-  ctx.font = `700 ${badgeSize}px Manrope, sans-serif`;
-  ctx.fillStyle = rgba(accentColor, 0.95);
-  ctx.fillText(badge, x, badgeY);
+  const measured = ctx.measureText("SERVER:");
+  const mainX = 420 + measured.width + 18;
 
-  ctx.shadowColor = rgba(accentColor, 0.25);
-  ctx.shadowBlur = Math.max(10, height * 0.06);
-  ctx.font = `800 ${titleSize}px Unbounded, sans-serif`;
-  ctx.fillStyle = theme.text;
-  ctx.fillText(title, x, height * 0.36);
+  const accentGradient = ctx.createLinearGradient(mainX, 210, mainX, 358);
+  accentGradient.addColorStop(0, "#ff9bb1");
+  accentGradient.addColorStop(0.52, preset.textAccent);
+  accentGradient.addColorStop(1, "#d60043");
+  ctx.fillStyle = accentGradient;
+  ctx.fillText(titleText.replace("SERVER: ", ""), mainX, 240);
+
+  ctx.shadowBlur = 10;
+  ctx.font = "800 52px Manrope, sans-serif";
+  ctx.fillStyle = "#ff3b30";
+  ctx.fillText(state.footerText, 370, 492);
 
   ctx.shadowBlur = 0;
-  ctx.font = `500 ${subtitleSize}px Manrope, sans-serif`;
-  ctx.fillStyle = theme.muted;
-
-  wrapText(subtitle, x, height * 0.61, width * 0.5, subtitleSize * 1.45, align);
-}
-
-function wrapText(text, x, y, maxWidth, lineHeight, align) {
-  const words = text.split(/\s+/).filter(Boolean);
-  const lines = [];
-  let line = "";
-
-  words.forEach((word) => {
-    const testLine = line ? `${line} ${word}` : word;
-    if (ctx.measureText(testLine).width > maxWidth && line) {
-      lines.push(line);
-      line = word;
-    } else {
-      line = testLine;
-    }
-  });
-
-  if (line) lines.push(line);
-
-  lines.slice(0, 3).forEach((item, index) => {
-    ctx.textAlign = align;
-    ctx.fillText(item, x, y + index * lineHeight);
-  });
-}
-
-function drawNoise(width, height, strength) {
-  if (strength <= 0) return;
-
-  ctx.save();
-  ctx.globalAlpha = strength / 100;
-
-  for (let i = 0; i < width * height * 0.0008; i += 1) {
-    const x = Math.random() * width;
-    const y = Math.random() * height;
-    const alpha = Math.random() * 0.5;
-    ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-    ctx.fillRect(x, y, 1, 1);
-  }
+  ctx.font = "700 14px Manrope, sans-serif";
+  ctx.fillStyle = "rgba(255,255,255,0.12)";
+  ctx.fillText("ZYRO RUSSIA MEDIA", 1250, 22);
 
   ctx.restore();
 }
 
-function renderBanner() {
-  resizeCanvas();
+function drawForegroundGlow(preset) {
+  ctx.save();
+  const glow = ctx.createRadialGradient(690, 362, 80, 690, 362, 300);
+  glow.addColorStop(0, rgba(preset.accent, 0.28));
+  glow.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = glow;
+  ctx.fillRect(240, 130, 900, 470);
+  ctx.restore();
+}
 
-  const width = els.canvas.width;
-  const height = els.canvas.height;
-  const theme = themes[els.theme.value];
-  const accentColor = els.accent.value;
-  const glowStrength = Number(els.shapeOpacity.value) / 100;
-  const grainStrength = Number(els.grainStrength.value);
-
-  ctx.clearRect(0, 0, width, height);
-  drawBackground(width, height, theme, accentColor, glowStrength);
-  drawShapes(width, height, accentColor, glowStrength);
-  if (els.showFrame.value === "yes") {
-    drawFrame(width, height, accentColor);
+function drawNoise() {
+  ctx.save();
+  ctx.globalAlpha = 0.07;
+  for (let i = 0; i < 2400; i += 1) {
+    const x = Math.random() * canvas.width;
+    const y = Math.random() * canvas.height;
+    const shade = Math.random() > 0.5 ? 255 : 0;
+    ctx.fillStyle = `rgba(${shade},${shade},${shade},${Math.random()})`;
+    ctx.fillRect(x, y, 1, 1);
   }
-  drawText(width, height, theme, accentColor);
-  drawNoise(width, height, grainStrength);
+  ctx.restore();
+}
+
+function renderCanvas() {
+  fitCanvas();
+  const preset = stylePresets[state.style];
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawBackground(preset);
+  drawBackdropCloud(preset);
+  drawShapeOverlay(preset);
+  drawElementBadge(preset);
+  drawForegroundGlow(preset);
+  drawTexts(preset);
+  drawNoise();
 }
 
 function downloadPng() {
   const link = document.createElement("a");
-  const titleSlug = (els.title.value || "banner")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-
-  link.href = els.canvas.toDataURL("image/png");
-  link.download = `${titleSlug || "banner"}-${els.canvas.width}x${els.canvas.height}.png`;
+  const serverName = state.server.toLowerCase().replace(/[^a-zа-я0-9]+/gi, "-");
+  link.href = canvas.toDataURL("image/png");
+  link.download = `zyro-media-${serverName}.png`;
   link.click();
 }
 
-function applyThemePreset(name) {
-  const defaultAccents = {
-    ember: "#ff6a2b",
-    carbon: "#b4bcc2",
-    ocean: "#2dc8ff",
-    forest: "#5fd36f"
-  };
+function randomizeScene() {
+  state.style = randomFrom(Object.keys(stylePresets));
+  state.server = randomFrom(Object.keys(serverMeta));
+  state.shape = randomFrom(["square", "circle", "triangle", "star", "grid"]);
+  state.element = randomFrom(["bear", "spark", "shield", "crown"]);
+  state.backgroundColor = randomFrom(["#070911", "#162d4d", "#2a2351", "#20355b"]);
 
-  els.accent.value = defaultAccents[name];
-  renderBanner();
+  const promoVariants = ["/promo > 2", "/promo > 5", "/media +promo", "/bonus > 3"];
+  const footerVariants = [
+    "скачать игру в тгк - @crmp_rage",
+    "подключайся прямо сейчас - @zyro_russia",
+    "медиа набор и розыгрыши - @zyro_media",
+    "промокоды и бонусы - @zyro_news"
+  ];
+
+  state.promoCode = randomFrom(promoVariants);
+  state.footerText = randomFrom(footerVariants);
+
+  syncControls();
+  renderCanvas();
 }
 
-function randomizeBanner() {
-  const themeNames = Object.keys(themes);
-  const presetNames = Object.keys(presets);
-  const alignments = ["left", "center", "right"];
-
-  els.theme.value = randomFrom(themeNames);
-  els.preset.value = randomFrom(presetNames);
-  els.title.value = randomFrom(titleSuggestions);
-  els.subtitle.value = randomFrom(subtitleSuggestions);
-  els.badge.value = randomFrom(badgeSuggestions);
-  els.titleAlign.value = randomFrom(alignments);
-  els.shapeOpacity.value = String(30 + Math.floor(Math.random() * 45));
-  els.grainStrength.value = String(Math.floor(Math.random() * 16));
-  els.titleScale.value = String(90 + Math.floor(Math.random() * 31));
-  els.subtitleScale.value = String(90 + Math.floor(Math.random() * 26));
-  els.showFrame.value = Math.random() > 0.35 ? "yes" : "no";
-
-  applyThemePreset(els.theme.value);
+function resetScene() {
+  state.style = "style1";
+  state.server = "Москва";
+  state.shape = "square";
+  state.element = "bear";
+  state.showBackground = true;
+  state.backgroundColor = "#070911";
+  state.promoCode = "/promo > 2";
+  state.footerText = "скачать игру в тгк - @crmp_rage";
+  state.customTitle = "";
+  state.uploadedImage = null;
+  els.backgroundUpload.value = "";
+  syncControls();
+  renderCanvas();
 }
 
-function resetBanner() {
-  els.preset.value = "1200x300";
-  els.title.value = "ZYRO RUSSIA";
-  els.subtitle.value = "Редактор баннеров для форума и игровых тем";
-  els.badge.value = "OFFICIAL TOOL";
-  els.theme.value = "ember";
-  els.accent.value = "#ff6a2b";
-  els.shapeOpacity.value = "50";
-  els.grainStrength.value = "10";
-  els.titleScale.value = "100";
-  els.subtitleScale.value = "100";
-  els.titleAlign.value = "left";
-  els.showFrame.value = "yes";
-  renderBanner();
+function syncControls() {
+  setActive(els.styleButtons, "style", state.style);
+  setActive(els.serverButtons, "server", state.server);
+  setActive(els.shapeButtons, "shape", state.shape);
+  setActive(els.elementButtons, "element", state.element);
+  setActive(els.swatches, "bg", state.backgroundColor);
+  els.backgroundToggle.classList.toggle("on", state.showBackground);
+  els.backgroundToggle.textContent = state.showBackground ? "ВКЛ" : "ВЫКЛ";
+  els.backgroundToggle.setAttribute("aria-pressed", String(state.showBackground));
+  els.promoCodeInput.value = state.promoCode;
+  els.footerInput.value = state.footerText;
 }
 
-[
-  els.preset,
-  els.title,
-  els.subtitle,
-  els.badge,
-  els.theme,
-  els.accent,
-  els.shapeOpacity,
-  els.grainStrength,
-  els.titleScale,
-  els.subtitleScale,
-  els.titleAlign,
-  els.showFrame
-].forEach((element) => {
-  element.addEventListener("input", renderBanner);
-  element.addEventListener("change", renderBanner);
-});
+function bindEvents() {
+  els.downloadButton.addEventListener("click", downloadPng);
+  els.resetButton.addEventListener("click", resetScene);
+  els.shuffleButton.addEventListener("click", randomizeScene);
 
-els.theme.addEventListener("change", () => {
-  applyThemePreset(els.theme.value);
-});
+  els.backgroundToggle.addEventListener("click", () => {
+    state.showBackground = !state.showBackground;
+    syncControls();
+    renderCanvas();
+  });
 
-els.downloadButton.addEventListener("click", downloadPng);
-els.randomizeButton.addEventListener("click", randomizeBanner);
-els.resetButton.addEventListener("click", resetBanner);
+  els.styleButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      state.style = button.dataset.style;
+      syncControls();
+      renderCanvas();
+    });
+  });
 
-resetBanner();
+  els.serverButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      state.server = button.dataset.server;
+      syncControls();
+      renderCanvas();
+    });
+  });
+
+  els.shapeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      state.shape = button.dataset.shape;
+      syncControls();
+      renderCanvas();
+    });
+  });
+
+  els.elementButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      state.element = button.dataset.element;
+      syncControls();
+      renderCanvas();
+    });
+  });
+
+  els.swatches.forEach((button) => {
+    button.addEventListener("click", () => {
+      state.backgroundColor = button.dataset.bg;
+      syncControls();
+      renderCanvas();
+    });
+  });
+
+  els.promoCodeInput.addEventListener("input", (event) => {
+    state.promoCode = event.target.value || "/promo > 2";
+    renderCanvas();
+  });
+
+  els.footerInput.addEventListener("input", (event) => {
+    state.footerText = event.target.value || "скачать игру в тгк - @crmp_rage";
+    renderCanvas();
+  });
+
+  els.addTextButton.addEventListener("click", () => {
+    const nextTitle = window.prompt("Введи крупный заголовок сервера", state.customTitle || serverMeta[state.server].title.replace("SERVER: ", ""));
+    if (nextTitle === null) {
+      return;
+    }
+    const cleaned = nextTitle.trim();
+    state.customTitle = cleaned ? `SERVER: ${cleaned.toUpperCase()}` : "";
+    renderCanvas();
+  });
+
+  els.addElementButton.addEventListener("click", () => {
+    const order = ["bear", "spark", "shield", "crown", "none"];
+    const index = order.indexOf(state.element);
+    state.element = order[(index + 1) % order.length];
+    syncControls();
+    renderCanvas();
+  });
+
+  els.formatButton.addEventListener("click", () => {
+    const order = ["style1", "style2", "style3", "style4"];
+    const index = order.indexOf(state.style);
+    state.style = order[(index + 1) % order.length];
+    syncControls();
+    renderCanvas();
+  });
+
+  els.backgroundUpload.addEventListener("change", (event) => {
+    const [file] = event.target.files || [];
+    if (!file) {
+      return;
+    }
+
+    const image = new Image();
+    image.onload = () => {
+      state.uploadedImage = image;
+      renderCanvas();
+    };
+    image.src = URL.createObjectURL(file);
+  });
+}
+
+bindEvents();
+resetScene();
