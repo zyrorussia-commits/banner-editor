@@ -4,7 +4,7 @@ const ctx = canvas.getContext("2d");
 const logoImage = new Image();
 logoImage.src = "assets/logo.png";
 
-const state = {
+const defaultState = {
   style: "style1",
   server: "Москва",
   shape: "square",
@@ -17,11 +17,13 @@ const state = {
   uploadedImage: null
 };
 
+const state = { ...defaultState };
+
 const stylePresets = {
   style1: {
     name: "Стиль 1",
-    backgroundTop: "#191115",
-    backgroundBottom: "#4a0f15",
+    backgroundTop: "#180d14",
+    backgroundBottom: "#5d121f",
     accent: "#ff2950",
     splash: "rgba(255, 28, 68, 0.92)",
     shadow: "rgba(25, 0, 0, 0.94)",
@@ -34,8 +36,8 @@ const stylePresets = {
   },
   style2: {
     name: "Стиль 2",
-    backgroundTop: "#131626",
-    backgroundBottom: "#26114a",
+    backgroundTop: "#111523",
+    backgroundBottom: "#2b1451",
     accent: "#8c5bff",
     splash: "rgba(150, 84, 255, 0.88)",
     shadow: "rgba(7, 0, 22, 0.92)",
@@ -48,8 +50,8 @@ const stylePresets = {
   },
   style3: {
     name: "Стиль 3",
-    backgroundTop: "#081c2d",
-    backgroundBottom: "#114960",
+    backgroundTop: "#071926",
+    backgroundBottom: "#13536b",
     accent: "#35d8ff",
     splash: "rgba(36, 205, 255, 0.9)",
     shadow: "rgba(0, 14, 28, 0.9)",
@@ -62,8 +64,8 @@ const stylePresets = {
   },
   style4: {
     name: "Стиль 4",
-    backgroundTop: "#23180f",
-    backgroundBottom: "#5b3413",
+    backgroundTop: "#24170f",
+    backgroundBottom: "#603a14",
     accent: "#ffaf39",
     splash: "rgba(255, 167, 56, 0.88)",
     shadow: "rgba(28, 14, 0, 0.92)",
@@ -87,6 +89,8 @@ const els = {
   resetButton: document.getElementById("resetButton"),
   shuffleButton: document.getElementById("shuffleButton"),
   backgroundToggle: document.getElementById("backgroundToggle"),
+  removeBackgroundButton: document.getElementById("removeBackgroundButton"),
+  statusChip: document.getElementById("statusChip"),
   styleButtons: Array.from(document.querySelectorAll("[data-style]")),
   serverButtons: Array.from(document.querySelectorAll("[data-server]")),
   shapeButtons: Array.from(document.querySelectorAll("[data-shape]")),
@@ -126,8 +130,16 @@ function fitCanvas() {
 
 function setActive(buttons, key, value) {
   buttons.forEach((button) => {
-    button.classList.toggle("active", button.dataset[key] === value);
+    const isActive = button.dataset[key] === value;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
   });
+}
+
+function applyState(nextState) {
+  Object.assign(state, nextState);
+  syncControls();
+  renderCanvas();
 }
 
 function drawBackground(preset) {
@@ -142,15 +154,21 @@ function drawBackground(preset) {
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  ctx.fillStyle = rgba(state.backgroundColor, 0.32);
+  ctx.fillStyle = rgba(state.backgroundColor, 0.3);
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   if (state.uploadedImage) {
     ctx.save();
-    ctx.globalAlpha = 0.28;
+    ctx.globalAlpha = 0.24;
     ctx.drawImage(state.uploadedImage, 0, 0, canvas.width, canvas.height);
     ctx.restore();
   }
+
+  const glow = ctx.createRadialGradient(1080, 110, 20, 1080, 110, 340);
+  glow.addColorStop(0, rgba(preset.accent, 0.26));
+  glow.addColorStop(1, "rgba(0, 0, 0, 0)");
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 function drawPattern(preset) {
@@ -160,7 +178,7 @@ function drawPattern(preset) {
 
   if (preset.pattern === "slashes") {
     ctx.lineWidth = 2;
-    for (let i = -200; i < 1600; i += 90) {
+    for (let i = -220; i < 1600; i += 88) {
       ctx.beginPath();
       ctx.moveTo(i, 0);
       ctx.lineTo(i + 240, 780);
@@ -170,15 +188,15 @@ function drawPattern(preset) {
 
   if (preset.pattern === "rings") {
     ctx.lineWidth = 2;
-    [210, 280, 350].forEach((radius) => {
+    [210, 282, 356].forEach((radius) => {
       ctx.beginPath();
-      ctx.arc(1040, 160, radius, 0.15 * Math.PI, 1.4 * Math.PI);
+      ctx.arc(1060, 152, radius, 0.15 * Math.PI, 1.42 * Math.PI);
       ctx.stroke();
     });
   }
 
   if (preset.pattern === "grid") {
-    ctx.globalAlpha = 0.3;
+    ctx.globalAlpha = 0.28;
     for (let x = 0; x < canvas.width; x += 60) {
       ctx.fillRect(x, 0, 1, canvas.height);
     }
@@ -188,13 +206,13 @@ function drawPattern(preset) {
   }
 
   if (preset.pattern === "beams") {
-    ctx.globalAlpha = 0.28;
+    ctx.globalAlpha = 0.26;
     for (let i = 0; i < 9; i += 1) {
       ctx.beginPath();
-      ctx.moveTo(150 + i * 150, -40);
-      ctx.lineTo(270 + i * 150, -40);
-      ctx.lineTo(40 + i * 130, 820);
-      ctx.lineTo(-20 + i * 130, 820);
+      ctx.moveTo(160 + i * 150, -40);
+      ctx.lineTo(280 + i * 150, -40);
+      ctx.lineTo(56 + i * 128, 820);
+      ctx.lineTo(-16 + i * 128, 820);
       ctx.closePath();
       ctx.fill();
     }
@@ -205,21 +223,21 @@ function drawPattern(preset) {
 
 function drawCentralSplash(preset) {
   ctx.save();
-  const splash = ctx.createRadialGradient(735, 380, 60, 735, 380, 420);
+  const splash = ctx.createRadialGradient(760, 390, 60, 760, 390, 430);
   splash.addColorStop(0, "rgba(255,255,255,0.12)");
-  splash.addColorStop(0.22, preset.splash);
-  splash.addColorStop(0.55, preset.shadow);
+  splash.addColorStop(0.24, preset.splash);
+  splash.addColorStop(0.56, preset.shadow);
   splash.addColorStop(1, "rgba(0,0,0,0)");
   ctx.fillStyle = splash;
   ctx.beginPath();
-  ctx.ellipse(770, 390, 450, 240, 0.08, 0, Math.PI * 2);
+  ctx.ellipse(786, 396, 470, 246, 0.04, 0, Math.PI * 2);
   ctx.fill();
 
-  for (let i = 0; i < 64; i += 1) {
-    const x = 430 + Math.random() * 620;
-    const y = 170 + Math.random() * 360;
-    const radius = 6 + Math.random() * 30;
-    ctx.fillStyle = Math.random() > 0.44 ? preset.splash : preset.shadow;
+  for (let i = 0; i < 58; i += 1) {
+    const x = 440 + Math.random() * 620;
+    const y = 176 + Math.random() * 360;
+    const radius = 8 + Math.random() * 26;
+    ctx.fillStyle = Math.random() > 0.45 ? preset.splash : preset.shadow;
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
@@ -233,47 +251,49 @@ function drawStar(cx, cy, outerRadius, innerRadius, points) {
   const step = Math.PI / points;
   ctx.beginPath();
   ctx.moveTo(cx, cy - outerRadius);
+
   for (let i = 0; i < points; i += 1) {
     ctx.lineTo(cx + Math.cos(rotation) * outerRadius, cy + Math.sin(rotation) * outerRadius);
     rotation += step;
     ctx.lineTo(cx + Math.cos(rotation) * innerRadius, cy + Math.sin(rotation) * innerRadius);
     rotation += step;
   }
+
   ctx.lineTo(cx, cy - outerRadius);
   ctx.closePath();
 }
 
 function drawShapeOverlay(preset) {
   ctx.save();
-  ctx.globalAlpha = 0.22;
+  ctx.globalAlpha = 0.24;
   ctx.fillStyle = rgba(preset.accent, 0.58);
-  ctx.strokeStyle = rgba("#ffffff", 0.2);
+  ctx.strokeStyle = rgba("#ffffff", 0.18);
   ctx.lineWidth = 3;
 
   if (state.shape === "square") {
-    ctx.fillRect(210, 175, 210, 210);
-    ctx.strokeRect(210, 175, 210, 210);
+    ctx.fillRect(206, 168, 222, 222);
+    ctx.strokeRect(206, 168, 222, 222);
   }
 
   if (state.shape === "circle") {
     ctx.beginPath();
-    ctx.arc(315, 280, 118, 0, Math.PI * 2);
+    ctx.arc(320, 278, 122, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
   }
 
   if (state.shape === "triangle") {
     ctx.beginPath();
-    ctx.moveTo(315, 120);
-    ctx.lineTo(185, 395);
-    ctx.lineTo(445, 395);
+    ctx.moveTo(320, 116);
+    ctx.lineTo(184, 404);
+    ctx.lineTo(456, 404);
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
   }
 
   if (state.shape === "star") {
-    drawStar(320, 280, 122, 54, 5);
+    drawStar(324, 282, 126, 56, 5);
     ctx.fill();
     ctx.stroke();
   }
@@ -281,7 +301,7 @@ function drawShapeOverlay(preset) {
   if (state.shape === "grid") {
     for (let row = 0; row < 5; row += 1) {
       for (let col = 0; col < 5; col += 1) {
-        ctx.fillRect(190 + col * 54, 150 + row * 54, 34, 34);
+        ctx.fillRect(192 + col * 54, 150 + row * 54, 34, 34);
       }
     }
   }
@@ -298,13 +318,13 @@ function drawLogo(preset) {
   ctx.shadowColor = preset.logoGlow;
   ctx.shadowBlur = 42;
   ctx.globalAlpha = 0.98;
-  ctx.drawImage(logoImage, 24, 60, 860, 560);
+  ctx.drawImage(logoImage, 40, 54, 824, 544);
   ctx.restore();
 }
 
 function drawBearMark(preset) {
   ctx.save();
-  ctx.translate(280, 270);
+  ctx.translate(286, 274);
   ctx.shadowColor = preset.logoGlow;
   ctx.shadowBlur = 24;
 
@@ -340,7 +360,7 @@ function drawBearMark(preset) {
 
 function drawMoonMark(preset) {
   ctx.save();
-  ctx.translate(290, 265);
+  ctx.translate(292, 268);
   ctx.shadowColor = preset.logoGlow;
   ctx.shadowBlur = 26;
   ctx.fillStyle = "#ffe2a3";
@@ -356,7 +376,7 @@ function drawMoonMark(preset) {
 
 function drawShieldMark(preset) {
   ctx.save();
-  ctx.translate(292, 260);
+  ctx.translate(294, 262);
   ctx.shadowColor = preset.logoGlow;
   ctx.shadowBlur = 20;
   ctx.fillStyle = "#ffffff";
@@ -435,28 +455,28 @@ function drawTextBlock(preset) {
   ctx.save();
   ctx.textBaseline = "top";
 
-  ctx.font = "800 58px Manrope, sans-serif";
+  ctx.font = "800 54px Manrope, sans-serif";
   ctx.fillStyle = preset.textAccentB;
-  ctx.fillText(state.promoCode, 740, 112);
+  ctx.fillText(state.promoCode, 742, 110);
 
   ctx.font = "900 112px Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif";
-  ctx.shadowColor = "rgba(0, 0, 0, 0.38)";
+  ctx.shadowColor = "rgba(0, 0, 0, 0.34)";
   ctx.shadowBlur = 12;
   ctx.fillStyle = preset.textMain;
-  ctx.fillText("SERVER:", 610, 250);
+  ctx.fillText("SERVER:", 610, 248);
 
   const serverX = 610 + ctx.measureText("SERVER:").width + 22;
   const gradient = ctx.createLinearGradient(serverX, 230, serverX, 390);
   gradient.addColorStop(0, preset.textAccentA);
-  gradient.addColorStop(0.55, preset.textAccentB);
+  gradient.addColorStop(0.54, preset.textAccentB);
   gradient.addColorStop(1, preset.textAccentB);
   ctx.fillStyle = gradient;
-  ctx.fillText(title, serverX, 250);
+  ctx.fillText(title, serverX, 248);
 
   ctx.shadowBlur = 8;
   ctx.font = "700 28px Manrope, sans-serif";
   ctx.fillStyle = "rgba(255,255,255,0.78)";
-  ctx.fillText(meta.label, 614, 376);
+  ctx.fillText(meta.label, 614, 374);
 
   ctx.font = "800 42px Manrope, sans-serif";
   ctx.fillStyle = preset.textAccentB;
@@ -464,8 +484,8 @@ function drawTextBlock(preset) {
 
   ctx.shadowBlur = 0;
   ctx.font = "700 18px Manrope, sans-serif";
-  ctx.fillStyle = "rgba(255,255,255,0.34)";
-  ctx.fillText(`ZYROSTUDIO • ${stylePresets[state.style].name.toUpperCase()}`, 970, 34);
+  ctx.fillStyle = "rgba(255,255,255,0.36)";
+  ctx.fillText(`ZYRO STUDIO • ${stylePresets[state.style].name.toUpperCase()}`, 956, 34);
 
   ctx.restore();
 }
@@ -475,13 +495,14 @@ function drawFrame(preset) {
   ctx.strokeStyle = preset.frame;
   ctx.lineWidth = 2;
   ctx.strokeRect(32, 32, canvas.width - 64, canvas.height - 64);
-  ctx.strokeRect(56, 56, canvas.width - 112, canvas.height - 112);
+  ctx.strokeRect(58, 58, canvas.width - 116, canvas.height - 116);
   ctx.restore();
 }
 
 function drawNoise() {
   ctx.save();
-  ctx.globalAlpha = 0.06;
+  ctx.globalAlpha = 0.05;
+
   for (let i = 0; i < 2600; i += 1) {
     const x = Math.random() * canvas.width;
     const y = Math.random() * canvas.height;
@@ -489,12 +510,13 @@ function drawNoise() {
     ctx.fillStyle = `rgba(${shade}, ${shade}, ${shade}, ${Math.random()})`;
     ctx.fillRect(x, y, 1, 1);
   }
+
   ctx.restore();
 }
 
 function renderCanvas() {
   fitCanvas();
-  const preset = stylePresets[state.style];
+  const preset = stylePresets[state.style] || stylePresets[defaultState.style];
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBackground(preset);
   drawPattern(preset);
@@ -512,11 +534,14 @@ function syncControls() {
   setActive(els.shapeButtons, "shape", state.shape);
   setActive(els.elementButtons, "element", state.element);
   setActive(els.swatches, "bg", state.backgroundColor);
-  els.backgroundToggle.classList.toggle("on", state.showBackground);
-  els.backgroundToggle.textContent = state.showBackground ? "ВКЛ" : "ВЫКЛ";
+
+  els.backgroundToggle.classList.toggle("is-active", state.showBackground);
   els.backgroundToggle.setAttribute("aria-pressed", String(state.showBackground));
+  els.backgroundToggle.textContent = state.showBackground ? "Фон включен" : "Фон выключен";
+
   els.promoCodeInput.value = state.promoCode;
   els.footerInput.value = state.footerText;
+  els.statusChip.textContent = `${stylePresets[state.style].name} · ${state.server}`;
 }
 
 function downloadPng() {
@@ -528,36 +553,25 @@ function downloadPng() {
 }
 
 function randomizeScene() {
-  state.style = randomFrom(Object.keys(stylePresets));
-  state.server = randomFrom(Object.keys(serverMeta));
-  state.shape = randomFrom(["square", "circle", "triangle", "star", "grid"]);
-  state.element = randomFrom(["logo", "bear", "spark", "shield", "crown"]);
-  state.backgroundColor = randomFrom(["#070911", "#162d4d", "#2a2351", "#20355b"]);
-  state.promoCode = randomFrom(["/promo > 2", "/promo > 5", "/media +bonus", "/bonus > 3"]);
-  state.footerText = randomFrom([
-    "скачать игру в тгк - @zyro_media",
-    "подключайся прямо сейчас - @zyro_russia",
-    "медиа набор и розыгрыши - @zyro_media",
-    "промокоды и бонусы - @zyro_news"
-  ]);
-  syncControls();
-  renderCanvas();
+  applyState({
+    style: randomFrom(Object.keys(stylePresets)),
+    server: randomFrom(Object.keys(serverMeta)),
+    shape: randomFrom(["square", "circle", "triangle", "star", "grid"]),
+    element: randomFrom(["logo", "bear", "spark", "shield", "crown"]),
+    backgroundColor: randomFrom(["#070911", "#162d4d", "#2a2351", "#20355b"]),
+    promoCode: randomFrom(["/promo > 2", "/promo > 5", "/media +bonus", "/bonus > 3"]),
+    footerText: randomFrom([
+      "скачать игру в тгк - @zyro_media",
+      "подключайся прямо сейчас - @zyro_russia",
+      "медиа набор и розыгрыши - @zyro_media",
+      "промокоды и бонусы - @zyro_news"
+    ])
+  });
 }
 
 function resetScene() {
-  state.style = "style1";
-  state.server = "Москва";
-  state.shape = "square";
-  state.element = "logo";
-  state.showBackground = true;
-  state.backgroundColor = "#070911";
-  state.promoCode = "/promo > 2";
-  state.footerText = "скачать игру в тгк - @zyro_media";
-  state.customTitle = "";
-  state.uploadedImage = null;
   els.backgroundUpload.value = "";
-  syncControls();
-  renderCanvas();
+  applyState({ ...defaultState, uploadedImage: null });
 }
 
 function bindEvents() {
@@ -566,85 +580,73 @@ function bindEvents() {
   els.shuffleButton.addEventListener("click", randomizeScene);
 
   els.backgroundToggle.addEventListener("click", () => {
-    state.showBackground = !state.showBackground;
-    syncControls();
-    renderCanvas();
+    applyState({ showBackground: !state.showBackground });
+  });
+
+  els.removeBackgroundButton.addEventListener("click", () => {
+    els.backgroundUpload.value = "";
+    applyState({ uploadedImage: null });
   });
 
   els.styleButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      state.style = button.dataset.style;
-      syncControls();
-      renderCanvas();
+      applyState({ style: button.dataset.style });
     });
   });
 
   els.serverButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      state.server = button.dataset.server;
-      syncControls();
-      renderCanvas();
+      applyState({ server: button.dataset.server });
     });
   });
 
   els.shapeButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      state.shape = button.dataset.shape;
-      syncControls();
-      renderCanvas();
+      applyState({ shape: button.dataset.shape });
     });
   });
 
   els.elementButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      state.element = button.dataset.element;
-      syncControls();
-      renderCanvas();
+      applyState({ element: button.dataset.element });
     });
   });
 
   els.swatches.forEach((button) => {
     button.addEventListener("click", () => {
-      state.backgroundColor = button.dataset.bg;
-      syncControls();
-      renderCanvas();
+      applyState({ backgroundColor: button.dataset.bg });
     });
   });
 
   els.promoCodeInput.addEventListener("input", (event) => {
-    state.promoCode = event.target.value || "/promo > 2";
+    state.promoCode = event.target.value || defaultState.promoCode;
     renderCanvas();
   });
 
   els.footerInput.addEventListener("input", (event) => {
-    state.footerText = event.target.value || "скачать игру в тгк - @zyro_media";
+    state.footerText = event.target.value || defaultState.footerText;
     renderCanvas();
   });
 
   els.addTextButton.addEventListener("click", () => {
     const current = state.customTitle || serverMeta[state.server].title;
-    const nextTitle = window.prompt("Введи название сервера крупным текстом", current);
+    const nextTitle = window.prompt("Введи серверный заголовок", current);
     if (nextTitle === null) {
       return;
     }
-    state.customTitle = nextTitle.trim().toUpperCase();
-    renderCanvas();
+    applyState({ customTitle: nextTitle.trim().toUpperCase() });
   });
 
   els.addElementButton.addEventListener("click", () => {
     const order = ["logo", "bear", "spark", "shield", "crown", "none"];
     const index = order.indexOf(state.element);
-    state.element = order[(index + 1) % order.length];
-    syncControls();
-    renderCanvas();
+    applyState({ element: order[(index + 1) % order.length] });
   });
 
   els.formatButton.addEventListener("click", () => {
     const order = ["style1", "style2", "style3", "style4"];
     const index = order.indexOf(state.style);
-    state.style = order[(index + 1) % order.length];
-    syncControls();
-    renderCanvas();
+    applyState({ style: order[(index + 1) % order.length] });
   });
 
   els.backgroundUpload.addEventListener("change", (event) => {
@@ -655,13 +657,16 @@ function bindEvents() {
 
     const image = new Image();
     image.onload = () => {
-      state.uploadedImage = image;
-      renderCanvas();
+      applyState({ uploadedImage: image });
     };
     image.src = URL.createObjectURL(file);
   });
 }
 
+function init() {
+  bindEvents();
+  applyState({ ...defaultState });
+}
+
 logoImage.addEventListener("load", renderCanvas);
-bindEvents();
-resetScene();
+init();
