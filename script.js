@@ -13,38 +13,38 @@ const state = {
   footer: defaults.footer
 };
 
-const styles = {
+const presets = {
   style1: {
     label: "Стиль 1",
-    top: "#18070d",
-    bottom: "#5d1122",
-    accent: "#ff2c64",
-    accentSoft: "#ff9ab8",
-    glow: "rgba(255, 44, 100, 0.42)"
+    top: "#18060d",
+    bottom: "#5c1326",
+    accent: "#ff2f64",
+    accentSoft: "#ff90ad",
+    bubble: "rgba(39, 0, 11, 0.88)"
   },
   style2: {
     label: "Стиль 2",
-    top: "#08121f",
-    bottom: "#174f79",
-    accent: "#44c2ff",
-    accentSoft: "#bceeff",
-    glow: "rgba(68, 194, 255, 0.38)"
+    top: "#0f1635",
+    bottom: "#3f2d8e",
+    accent: "#8f74ff",
+    accentSoft: "#d0c5ff",
+    bubble: "rgba(16, 12, 48, 0.88)"
   },
   style3: {
     label: "Стиль 3",
-    top: "#09110a",
-    bottom: "#1d5f33",
-    accent: "#6dff8f",
-    accentSoft: "#cfffda",
-    glow: "rgba(109, 255, 143, 0.32)"
+    top: "#081714",
+    bottom: "#0f5c53",
+    accent: "#41d3a7",
+    accentSoft: "#b8fff0",
+    bubble: "rgba(1, 33, 28, 0.88)"
   },
   style4: {
     label: "Стиль 4",
-    top: "#120d08",
-    bottom: "#7c4d14",
-    accent: "#ffbf4d",
-    accentSoft: "#ffedc7",
-    glow: "rgba(255, 191, 77, 0.34)"
+    top: "#171008",
+    bottom: "#724319",
+    accent: "#ffb643",
+    accentSoft: "#ffebbd",
+    bubble: "rgba(55, 26, 0, 0.88)"
   }
 };
 
@@ -53,6 +53,7 @@ const elements = {
   promoInput: document.getElementById("promoInput"),
   footerInput: document.getElementById("footerInput"),
   downloadButton: document.getElementById("downloadButton"),
+  resetButton: document.getElementById("resetButton"),
   clearStyleButton: document.getElementById("clearStyleButton"),
   styleStatus: document.getElementById("styleStatus")
 };
@@ -62,29 +63,29 @@ function resizeCanvas() {
   canvas.height = 720;
 }
 
-function roundRectPath(x, y, width, height, radius) {
-  const safeRadius = Math.min(radius, width / 2, height / 2);
+function roundedRect(x, y, width, height, radius) {
+  const safe = Math.min(radius, width / 2, height / 2);
   ctx.beginPath();
-  ctx.moveTo(x + safeRadius, y);
-  ctx.lineTo(x + width - safeRadius, y);
-  ctx.quadraticCurveTo(x + width, y, x + width, y + safeRadius);
-  ctx.lineTo(x + width, y + height - safeRadius);
-  ctx.quadraticCurveTo(x + width, y + height, x + width - safeRadius, y + height);
-  ctx.lineTo(x + safeRadius, y + height);
-  ctx.quadraticCurveTo(x, y + height, x, y + height - safeRadius);
-  ctx.lineTo(x, y + safeRadius);
-  ctx.quadraticCurveTo(x, y, x + safeRadius, y);
+  ctx.moveTo(x + safe, y);
+  ctx.lineTo(x + width - safe, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + safe);
+  ctx.lineTo(x + width, y + height - safe);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - safe, y + height);
+  ctx.lineTo(x + safe, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - safe);
+  ctx.lineTo(x, y + safe);
+  ctx.quadraticCurveTo(x, y, x + safe, y);
   ctx.closePath();
 }
 
-function fillRoundRect(x, y, width, height, radius, fillStyle) {
-  roundRectPath(x, y, width, height, radius);
+function fillRoundedRect(x, y, width, height, radius, fillStyle) {
+  roundedRect(x, y, width, height, radius);
   ctx.fillStyle = fillStyle;
   ctx.fill();
 }
 
-function strokeRoundRect(x, y, width, height, radius, strokeStyle, lineWidth) {
-  roundRectPath(x, y, width, height, radius);
+function strokeRoundedRect(x, y, width, height, radius, strokeStyle, lineWidth) {
+  roundedRect(x, y, width, height, radius);
   ctx.lineWidth = lineWidth;
   ctx.strokeStyle = strokeStyle;
   ctx.stroke();
@@ -95,25 +96,40 @@ function applyButtonState() {
     button.classList.toggle("is-active", button.dataset.style === state.style);
   });
 
-  elements.styleStatus.textContent = state.style ? styles[state.style].label : "Стиль не выбран";
+  elements.styleStatus.textContent = state.style ? presets[state.style].label : "Стиль не выбран";
 }
 
-function drawGridOverlay() {
+function drawBackgroundGrid() {
   ctx.save();
   ctx.strokeStyle = "rgba(255,255,255,0.05)";
   ctx.lineWidth = 1;
 
-  for (let x = 0; x <= canvas.width; x += 80) {
+  for (let x = 0; x <= canvas.width; x += 88) {
     ctx.beginPath();
     ctx.moveTo(x, 0);
     ctx.lineTo(x, canvas.height);
     ctx.stroke();
   }
 
-  for (let y = 0; y <= canvas.height; y += 80) {
+  for (let y = 0; y <= canvas.height; y += 88) {
     ctx.beginPath();
     ctx.moveTo(0, y);
     ctx.lineTo(canvas.width, y);
+    ctx.stroke();
+  }
+
+  ctx.restore();
+}
+
+function drawDiagonalOverlay() {
+  ctx.save();
+  ctx.strokeStyle = "rgba(255, 180, 200, 0.22)";
+  ctx.lineWidth = 3;
+
+  for (let x = -180; x <= canvas.width + 140; x += 86) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x + 170, canvas.height);
     ctx.stroke();
   }
 
@@ -124,52 +140,51 @@ function drawEmptyState() {
   resizeCanvas();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  const bg = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-  bg.addColorStop(0, "#0a1625");
-  bg.addColorStop(1, "#08101b");
-  ctx.fillStyle = bg;
+  const base = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+  base.addColorStop(0, "#0b1625");
+  base.addColorStop(1, "#070e18");
+  ctx.fillStyle = base;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  drawGridOverlay();
+  drawBackgroundGrid();
 
-  fillRoundRect(70, 70, 1140, 580, 34, "rgba(8, 16, 28, 0.84)");
-  strokeRoundRect(70, 70, 1140, 580, 34, "rgba(122, 163, 255, 0.16)", 2);
+  fillRoundedRect(84, 84, 1112, 552, 34, "rgba(10, 18, 30, 0.9)");
+  strokeRoundedRect(84, 84, 1112, 552, 34, "rgba(122, 163, 255, 0.18)", 2);
 
-  ctx.fillStyle = "#7aa3ff";
+  ctx.fillStyle = "#86a9f8";
   ctx.font = "700 22px Inter";
-  ctx.textAlign = "left";
-  ctx.fillText("RAGE MEDIA PROMO", 118, 136);
+  ctx.fillText("MEDIA PROMO", 126, 146);
 
   ctx.fillStyle = "#ffffff";
-  ctx.font = "900 82px Inter";
-  ctx.fillText("МОСКВА", 118, 270);
+  ctx.font = "900 92px Inter";
+  ctx.fillText("МОСКВА", 126, 276);
 
-  ctx.font = "700 44px Inter";
-  ctx.fillText("Стиль пока не выбран", 118, 348);
+  ctx.font = "800 44px Inter";
+  ctx.fillText("Выбери стиль справа", 126, 350);
 
   ctx.fillStyle = "rgba(255,255,255,0.62)";
   ctx.font = "500 28px Inter";
-  ctx.fillText("Нажми на карточку справа, чтобы включить один из 4 стилей.", 118, 404);
-  ctx.fillText("Баннер не активируется сам при загрузке.", 118, 444);
+  ctx.fillText("Баннер не показывается сам при загрузке.", 126, 412);
+  ctx.fillText("Нажми на одну из карточек стиля, чтобы активировать сцену.", 126, 452);
 
-  fillRoundRect(118, 520, 438, 70, 20, "rgba(18, 34, 55, 0.92)");
-  ctx.fillStyle = "#dbe7ff";
-  ctx.font = "700 34px Inter";
-  ctx.fillText(defaults.footer, 144, 565);
+  fillRoundedRect(126, 524, 510, 74, 22, "rgba(17, 29, 48, 0.94)");
+  ctx.fillStyle = "#dce8ff";
+  ctx.font = "700 33px Inter";
+  ctx.fillText(defaults.footer, 154, 571);
 }
 
-function drawAccentBubbles(color) {
-  const bubbles = [
-    [905, 192, 34], [970, 254, 27], [864, 276, 18], [759, 228, 22],
-    [728, 327, 28], [865, 368, 20], [1008, 370, 16], [944, 438, 24],
-    [800, 451, 17], [681, 422, 21], [610, 278, 14], [589, 375, 26]
+function drawBubbles(accent, bubble) {
+  const dots = [
+    [458, 244, 26, accent], [500, 178, 24, accent], [548, 260, 20, accent], [594, 342, 24, bubble],
+    [684, 224, 17, bubble], [742, 344, 27, bubble], [790, 212, 20, accent], [856, 286, 18, bubble],
+    [908, 178, 22, accent], [932, 416, 18, accent], [813, 452, 16, bubble], [670, 452, 22, bubble],
+    [564, 434, 20, accent], [490, 382, 19, bubble], [436, 316, 23, accent], [982, 254, 14, bubble]
   ];
 
-  ctx.fillStyle = color;
-
-  bubbles.forEach(([x, y, radius], index) => {
-    ctx.globalAlpha = 0.9 - index * 0.04;
+  dots.forEach(([x, y, radius, color], index) => {
+    ctx.globalAlpha = 0.92 - index * 0.02;
     ctx.beginPath();
+    ctx.fillStyle = color;
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
   });
@@ -177,56 +192,64 @@ function drawAccentBubbles(color) {
   ctx.globalAlpha = 1;
 }
 
+function drawSceneFrame() {
+  strokeRoundedRect(84, 84, 1112, 552, 34, "rgba(255, 122, 155, 0.35)", 2);
+  strokeRoundedRect(108, 108, 1064, 504, 24, "rgba(255, 122, 155, 0.28)", 2);
+}
+
 function drawStyledBanner() {
   resizeCanvas();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  const preset = styles[state.style];
-  const background = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-  background.addColorStop(0, preset.top);
-  background.addColorStop(1, preset.bottom);
-  ctx.fillStyle = background;
+  const preset = presets[state.style];
+  const base = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+  base.addColorStop(0, preset.top);
+  base.addColorStop(1, preset.bottom);
+  ctx.fillStyle = base;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  drawGridOverlay();
+  drawBackgroundGrid();
+  drawDiagonalOverlay();
 
-  fillRoundRect(66, 66, 1148, 588, 34, "rgba(20, 10, 18, 0.22)");
-  strokeRoundRect(66, 66, 1148, 588, 34, "rgba(255,255,255,0.14)", 2);
-  strokeRoundRect(92, 92, 1096, 536, 26, "rgba(255,255,255,0.08)", 2);
+  fillRoundedRect(84, 84, 1112, 552, 34, "rgba(23, 8, 18, 0.22)");
+  drawSceneFrame();
 
-  const glow = ctx.createRadialGradient(778, 345, 50, 778, 345, 280);
-  glow.addColorStop(0, "rgba(255,255,255,0.66)");
-  glow.addColorStop(0.18, preset.glow);
+  ctx.fillStyle = "rgba(255,255,255,0.07)";
+  ctx.fillRect(176, 196, 202, 214);
+
+  const glow = ctx.createRadialGradient(694, 352, 56, 694, 352, 290);
+  glow.addColorStop(0, "rgba(255,255,255,0.65)");
+  glow.addColorStop(0.12, preset.accentSoft);
+  glow.addColorStop(0.28, preset.accent);
+  glow.addColorStop(0.56, "rgba(0,0,0,0.28)");
   glow.addColorStop(1, "rgba(0,0,0,0)");
   ctx.fillStyle = glow;
-  ctx.fillRect(330, 80, 690, 540);
+  ctx.fillRect(280, 90, 700, 560);
 
-  ctx.fillStyle = "rgba(255,255,255,0.05)";
-  ctx.fillRect(176, 168, 198, 210);
+  drawBubbles(preset.accent, preset.bubble);
 
-  drawAccentBubbles(preset.accent);
+  ctx.fillStyle = "rgba(255,255,255,0.42)";
+  ctx.font = "800 22px Inter";
+  ctx.textAlign = "right";
+  ctx.fillText("MEDIA PROMO • СТИЛЬ", 1062, 122);
 
   ctx.fillStyle = preset.accent;
   ctx.font = "800 34px Inter";
   ctx.textAlign = "center";
-  ctx.fillText(state.promo, canvas.width / 2, 168);
+  ctx.fillText(state.promo, 775, 186);
 
   ctx.textAlign = "left";
   ctx.fillStyle = "#ffffff";
-  ctx.font = "900 106px Inter";
-  ctx.fillText("SERVER: MOSCOW", 525, 332);
+  ctx.font = "900 104px Inter";
+  ctx.fillText("SERVER: MOSCOW", 522, 358);
 
-  ctx.fillStyle = "rgba(255,255,255,0.8)";
-  ctx.font = "700 40px Inter";
-  ctx.fillText("CAPITAL DISTRICT", 530, 394);
+  ctx.fillStyle = "rgba(255,255,255,0.82)";
+  ctx.font = "700 38px Inter";
+  ctx.fillText("CAPITAL DISTRICT", 530, 420);
 
   ctx.fillStyle = preset.accent;
-  ctx.font = "800 52px Inter";
-  ctx.fillText(state.footer, 310, 558);
-
-  ctx.fillStyle = "rgba(255,255,255,0.5)";
-  ctx.font = "700 20px Inter";
-  ctx.fillText("RAGE MEDIA PROMO  •  МОСКВА", 860, 108);
+  ctx.font = "800 50px Inter";
+  ctx.fillText(state.footer, 306, 558);
 }
 
 function render() {
@@ -243,8 +266,17 @@ function render() {
 function downloadBanner() {
   const link = document.createElement("a");
   link.href = canvas.toDataURL("image/png");
-  link.download = `moscow-banner-${state.style || "empty"}.png`;
+  link.download = `moscow-media-promo-${state.style || "empty"}.png`;
   link.click();
+}
+
+function resetState() {
+  state.style = defaults.style;
+  state.promo = defaults.promo;
+  state.footer = defaults.footer;
+  elements.promoInput.value = defaults.promo;
+  elements.footerInput.value = defaults.footer;
+  render();
 }
 
 function setupEvents() {
@@ -259,6 +291,8 @@ function setupEvents() {
     state.style = null;
     render();
   });
+
+  elements.resetButton.addEventListener("click", resetState);
 
   elements.promoInput.addEventListener("input", (event) => {
     state.promo = event.target.value.trim() || defaults.promo;

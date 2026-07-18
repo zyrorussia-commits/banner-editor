@@ -3,85 +3,52 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>RAGE Media Promo</title>
+  <title>Media Promo Editor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main class="shell">
-    <section class="workspace">
-      <header class="hero">
-        <p class="eyebrow">RAGE MEDIA PROMO</p>
-        <h1>Редактор баннера под Москву</h1>
-        <p class="hero-copy">Взяли за основу нормальный продуктовый каркас и оставили только то, что нужно: одна сцена, Москва, стиль по клику и экспорт в PNG.</p>
+  <main class="app-shell">
+    <section class="main-panel">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">MP</div>
+          <div>
+            <p class="eyebrow">MEDIA PROMO SYSTEM</p>
+            <h1>Баннер под Москву</h1>
+          </div>
+        </div>
+        <div class="toolbar">
+          <button class="ghost-button" id="resetButton" type="button">Сбросить</button>
+          <button class="primary-button" id="downloadButton" type="button">Скачать PNG</button>
+        </div>
       </header>
 
-      <section class="stage-panel">
-        <div class="stage-head">
-          <div>
-            <p class="section-label">Preview</p>
-            <h2>Сцена баннера</h2>
-          </div>
-          <div class="stage-meta">
-            <span class="server-pill">Сервер: Москва</span>
-            <span class="style-pill" id="styleStatus">Стиль не выбран</span>
-          </div>
+      <section class="hero">
+        <div>
+          <p class="section-label">Preview</p>
+          <h2>Собираем медиа-промокод как готовый баннер</h2>
+          <p class="hero-copy">Оставили только то, что реально нужно: Москва, четыре стиля, промокод, строка про Telegram и скачивание картинки.</p>
         </div>
+        <div class="hero-meta">
+          <span class="meta-pill">Сервер: Москва</span>
+          <span class="meta-pill meta-pill-active" id="styleStatus">Стиль не выбран</span>
+        </div>
+      </section>
 
-        <div class="canvas-shell">
-          <canvas id="promoCanvas" width="1280" height="720"></canvas>
-        </div>
+      <section class="preview-shell">
+        <canvas id="promoCanvas" width="1280" height="720"></canvas>
       </section>
     </section>
 
-    <aside class="sidebar">
-      <section class="card">
-        <p class="section-label">Server</p>
-        <h3>Только Москва</h3>
-        <p class="card-copy">Другие сервера убраны, чтобы не было лишней мешанины.</p>
-        <div class="locked-server">Москва</div>
-      </section>
-
-      <section class="card">
-        <p class="section-label">Styles</p>
-        <div class="card-row">
-          <div>
-            <h3>Выбери стиль</h3>
-            <p class="card-copy">Ничего не включается само. Баннер собирается только после клика.</p>
-          </div>
-          <button class="ghost-button" id="clearStyleButton" type="button">Снять стиль</button>
-        </div>
-
-        <div class="style-grid">
-          <button class="style-card" type="button" data-style="style1">
-            <span class="swatch swatch-red"></span>
-            <strong>Стиль 1</strong>
-            <span>Красный удар</span>
-          </button>
-          <button class="style-card" type="button" data-style="style2">
-            <span class="swatch swatch-blue"></span>
-            <strong>Стиль 2</strong>
-            <span>Холодный неон</span>
-          </button>
-          <button class="style-card" type="button" data-style="style3">
-            <span class="swatch swatch-green"></span>
-            <strong>Стиль 3</strong>
-            <span>Темный лайм</span>
-          </button>
-          <button class="style-card" type="button" data-style="style4">
-            <span class="swatch swatch-gold"></span>
-            <strong>Стиль 4</strong>
-            <span>Золотой акцент</span>
-          </button>
-        </div>
-      </section>
-
-      <section class="card">
-        <p class="section-label">Text</p>
-        <h3>Текст баннера</h3>
-        <div class="field-list">
+    <aside class="side-panel">
+      <section class="panel-card">
+        <p class="section-label">Scene</p>
+        <h3>Быстрые настройки</h3>
+        <div class="server-lock">Москва</div>
+        <div class="field-list compact">
           <label class="field">
             <span>Промокод</span>
             <input id="promoInput" type="text" maxlength="24" value="/promo > 2">
@@ -93,9 +60,42 @@
         </div>
       </section>
 
-      <section class="card action-card">
-        <p class="section-label">Export</p>
-        <button class="primary-button" id="downloadButton" type="button">Скачать PNG</button>
+      <section class="panel-card">
+        <div class="panel-head">
+          <div>
+            <p class="section-label">Presets</p>
+            <h3>Стиль баннера</h3>
+          </div>
+          <button class="ghost-button ghost-button-small" id="clearStyleButton" type="button">Снять</button>
+        </div>
+
+        <div class="style-grid">
+          <button class="style-card" type="button" data-style="style1">
+            <span class="swatch swatch-red"></span>
+            <strong>Стиль 1</strong>
+            <span>Контрастный красный</span>
+          </button>
+          <button class="style-card" type="button" data-style="style2">
+            <span class="swatch swatch-blue"></span>
+            <strong>Стиль 2</strong>
+            <span>Холодный неон</span>
+          </button>
+          <button class="style-card" type="button" data-style="style3">
+            <span class="swatch swatch-green"></span>
+            <strong>Стиль 3</strong>
+            <span>Токсичный лайм</span>
+          </button>
+          <button class="style-card" type="button" data-style="style4">
+            <span class="swatch swatch-gold"></span>
+            <strong>Стиль 4</strong>
+            <span>Теплый удар</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="panel-card panel-card-tip">
+        <p class="section-label">Info</p>
+        <p class="tip-copy">Стиль не активируется сам. Баннер появляется только после клика по карточке.</p>
       </section>
     </aside>
   </main>
