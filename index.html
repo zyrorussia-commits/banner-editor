@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zyro Russia | Banner Editor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">ZYRO RUSSIA</p>
+      <h1>Banner Editor</h1>
+      <p class="hero-copy">Мини-редактор для форумных баннеров, шапок тем и промо-картинок.</p>
+    </header>
+
+    <main class="layout">
+      <section class="panel controls-panel">
+        <div class="panel-heading">
+          <h2>Настройки</h2>
+          <button class="ghost-button" id="resetButton" type="button">Сбросить</button>
+        </div>
+
+        <div class="control-group">
+          <label class="field-label" for="bannerPreset">Размер</label>
+          <select id="bannerPreset">
+            <option value="1200x300">Форумный баннер 1200x300</option>
+            <option value="1200x500">Шапка темы 1200x500</option>
+            <option value="1000x420">Промо-карта 1000x420</option>
+            <option value="1600x900">Широкий постер 1600x900</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label class="field-label" for="bannerTitle">Главный текст</label>
+          <input id="bannerTitle" type="text" maxlength="52" value="ZYRO RUSSIA">
+        </div>
+
+        <div class="control-group">
+          <label class="field-label" for="bannerSubtitle">Подпись</label>
+          <input id="bannerSubtitle" type="text" maxlength="90" value="Редактор баннеров для форума и игровых тем">
+        </div>
+
+        <div class="control-group">
+          <label class="field-label" for="bannerBadge">Плашка</label>
+          <input id="bannerBadge" type="text" maxlength="28" value="OFFICIAL TOOL">
+        </div>
+
+        <div class="control-row">
+          <div class="control-group">
+            <label class="field-label" for="themePreset">Тема</label>
+            <select id="themePreset">
+              <option value="ember">Ember</option>
+              <option value="carbon">Carbon</option>
+              <option value="ocean">Ocean</option>
+              <option value="forest">Forest</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label class="field-label" for="accentColor">Акцент</label>
+            <input id="accentColor" type="color" value="#ff6a2b">
+          </div>
+        </div>
+
+        <div class="control-row">
+          <div class="control-group">
+            <label class="field-label" for="shapeOpacity">Свечение</label>
+            <input id="shapeOpacity" type="range" min="10" max="90" value="50">
+          </div>
+
+          <div class="control-group">
+            <label class="field-label" for="grainStrength">Шум</label>
+            <input id="grainStrength" type="range" min="0" max="30" value="10">
+          </div>
+        </div>
+
+        <div class="control-row">
+          <div class="control-group">
+            <label class="field-label" for="titleScale">Размер заголовка</label>
+            <input id="titleScale" type="range" min="70" max="150" value="100">
+          </div>
+
+          <div class="control-group">
+            <label class="field-label" for="subtitleScale">Размер подписи</label>
+            <input id="subtitleScale" type="range" min="70" max="150" value="100">
+          </div>
+        </div>
+
+        <div class="control-row">
+          <div class="control-group">
+            <label class="field-label" for="titleAlign">Выравнивание</label>
+            <select id="titleAlign">
+              <option value="left">Слева</option>
+              <option value="center">По центру</option>
+              <option value="right">Справа</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label class="field-label" for="showFrame">Рамка</label>
+            <select id="showFrame">
+              <option value="yes">Да</option>
+              <option value="no">Нет</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="primary-button" id="downloadPngButton" type="button">Скачать PNG</button>
+          <button class="secondary-button" id="randomizeButton" type="button">Случайный стиль</button>
+        </div>
+
+        <div class="tip-box">
+          <h3>Как публиковать</h3>
+          <p>Скачай PNG, загрузи картинку на форум или используй отдельный GitHub Pages, если захочешь встроенную версию редактора в тему.</p>
+        </div>
+      </section>
+
+      <section class="panel preview-panel">
+        <div class="panel-heading">
+          <h2>Превью</h2>
+          <p class="size-indicator" id="sizeIndicator">1200 x 300</p>
+        </div>
+
+        <div class="canvas-frame">
+          <canvas id="bannerCanvas" width="1200" height="300"></canvas>
+        </div>
+
+        <div class="preview-footer">
+          <p>Файл скачивается в реальном размере без потери качества.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
