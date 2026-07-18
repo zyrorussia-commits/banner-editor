@@ -3,179 +3,92 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zyro Studio | Конструктор промо-баннеров</title>
+  <title>Zyro | Баннер Москва</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Unbounded:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="app-shell">
-    <header class="topbar">
-      <div class="brand-block">
-        <div class="brand-mark">ZS</div>
-        <div>
-          <div class="eyebrow">media banner system</div>
-          <div class="brand-name">Zyro Studio</div>
-        </div>
+  <div class="app">
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">zyro promo builder</div>
+        <h1>Собери баннер под Москву без лишнего мусора</h1>
+        <p>Один сервер, четыре стиля и нормальный чистый экран. Стиль включается только после клика.</p>
       </div>
 
-      <div class="topbar-actions">
-        <button class="ghost-button" id="shuffleButton" type="button">Случайный сетап</button>
-        <button class="ghost-button" id="resetButton" type="button">Сбросить</button>
-        <button class="primary-button" id="downloadButton" type="button">Скачать PNG</button>
+      <div class="hero-actions">
+        <button class="button button-secondary" id="resetButton" type="button">Сбросить</button>
+        <button class="button button-primary" id="downloadButton" type="button">Скачать PNG</button>
       </div>
-    </header>
+    </section>
 
     <main class="layout">
-      <section class="stage-panel">
-        <div class="stage-panel-head">
+      <section class="preview-panel">
+        <div class="preview-head">
           <div>
             <div class="eyebrow">preview</div>
-            <h1>Собираем баннер как наш рабочий инструмент</h1>
+            <h2>Москва</h2>
           </div>
-          <div class="status-chip" id="statusChip">Стиль 1 · Москва</div>
+          <div class="status" id="statusLabel">Стиль не выбран</div>
         </div>
 
-        <div class="stage-card">
-          <div class="stage-grid"></div>
-          <div class="canvas-frame">
-            <canvas id="promoCanvas" width="1400" height="780"></canvas>
-          </div>
+        <div class="canvas-shell">
+          <canvas id="promoCanvas" width="1400" height="780"></canvas>
         </div>
       </section>
 
-      <aside class="control-panel">
-        <section class="panel-section panel-section-highlight">
-          <div class="panel-section-head">
-            <div>
-              <div class="eyebrow">scene</div>
-              <h2>Быстрые настройки</h2>
-            </div>
-            <button class="toggle-button" id="backgroundToggle" type="button" aria-pressed="true">Фон включен</button>
+      <aside class="sidebar">
+        <section class="card">
+          <div class="card-head">
+            <div class="eyebrow">server</div>
+            <h3>Сервер</h3>
           </div>
-
-          <div class="compact-fields">
-            <label class="field">
-              <span class="field-label">Промокод</span>
-              <input id="promoCodeInput" type="text" maxlength="24" value="/promo > 2">
-            </label>
-            <label class="field">
-              <span class="field-label">Нижняя строка</span>
-              <input id="footerInput" type="text" maxlength="60" value="скачать игру в тгк - @zyro_media">
-            </label>
-          </div>
+          <div class="server-chip">Москва</div>
         </section>
 
-        <section class="panel-section">
-          <div class="panel-section-head">
-            <div>
-              <div class="eyebrow">presets</div>
-              <h2>Стиль баннера</h2>
-            </div>
+        <section class="card">
+          <div class="card-head">
+            <div class="eyebrow">styles</div>
+            <h3>Выбери стиль</h3>
           </div>
-          <div class="preset-grid">
-            <button class="preset-card" type="button" data-style="style1">
-              <span class="preset-swatch preset-swatch-red"></span>
-              <span class="preset-title">Стиль 1</span>
-              <span class="preset-note">Контрастный красный</span>
+
+          <div class="style-grid">
+            <button class="style-card" type="button" data-style="style1">
+              <span class="style-preview style-preview-1"></span>
+              <span class="style-name">Стиль 1</span>
             </button>
-            <button class="preset-card" type="button" data-style="style2">
-              <span class="preset-swatch preset-swatch-violet"></span>
-              <span class="preset-title">Стиль 2</span>
-              <span class="preset-note">Глубокий неон</span>
+            <button class="style-card" type="button" data-style="style2">
+              <span class="style-preview style-preview-2"></span>
+              <span class="style-name">Стиль 2</span>
             </button>
-            <button class="preset-card" type="button" data-style="style3">
-              <span class="preset-swatch preset-swatch-cyan"></span>
-              <span class="preset-title">Стиль 3</span>
-              <span class="preset-note">Холодный тех</span>
+            <button class="style-card" type="button" data-style="style3">
+              <span class="style-preview style-preview-3"></span>
+              <span class="style-name">Стиль 3</span>
             </button>
-            <button class="preset-card" type="button" data-style="style4">
-              <span class="preset-swatch preset-swatch-gold"></span>
-              <span class="preset-title">Стиль 4</span>
-              <span class="preset-note">Теплый удар</span>
+            <button class="style-card" type="button" data-style="style4">
+              <span class="style-preview style-preview-4"></span>
+              <span class="style-name">Стиль 4</span>
             </button>
           </div>
         </section>
 
-        <section class="panel-section">
-          <div class="panel-section-head">
-            <div>
-              <div class="eyebrow">content</div>
-              <h2>Сервер и графика</h2>
-            </div>
+        <section class="card">
+          <div class="card-head">
+            <div class="eyebrow">text</div>
+            <h3>Текст баннера</h3>
           </div>
 
-          <div class="option-group">
-            <div class="group-label">Сервер</div>
-            <div class="pill-row">
-              <button class="pill-button" type="button" data-server="Москва">Москва</button>
-              <button class="pill-button" type="button" data-server="Питер">Питер</button>
-              <button class="pill-button" type="button" data-server="Екатеринбург">Екатеринбург</button>
-            </div>
-          </div>
+          <label class="field">
+            <span>Промокод</span>
+            <input id="promoInput" type="text" maxlength="24" value="/promo > 2">
+          </label>
 
-          <div class="option-group">
-            <div class="group-label">Фигура</div>
-            <div class="icon-row">
-              <button class="icon-tile" type="button" data-shape="square" aria-label="Квадрат"><span class="shape shape-square"></span></button>
-              <button class="icon-tile" type="button" data-shape="circle" aria-label="Круг"><span class="shape shape-circle"></span></button>
-              <button class="icon-tile" type="button" data-shape="triangle" aria-label="Треугольник"><span class="shape shape-triangle"></span></button>
-              <button class="icon-tile" type="button" data-shape="star" aria-label="Звезда"><span class="shape shape-star">★</span></button>
-              <button class="icon-tile" type="button" data-shape="grid" aria-label="Сетка"><span class="shape shape-grid"></span></button>
-            </div>
-          </div>
-
-          <div class="option-group">
-            <div class="group-label">Элемент</div>
-            <div class="icon-row icon-row-elements">
-              <button class="icon-tile icon-tile-logo" type="button" data-element="logo" aria-label="Логотип Zyro"><img src="assets/logo.png" alt="Zyro logo"></button>
-              <button class="icon-tile" type="button" data-element="bear" aria-label="Волк">🐺</button>
-              <button class="icon-tile" type="button" data-element="spark" aria-label="Луна">🌕</button>
-              <button class="icon-tile" type="button" data-element="shield" aria-label="Щит">🛡</button>
-              <button class="icon-tile" type="button" data-element="crown" aria-label="Крылья">🦇</button>
-              <button class="icon-tile" type="button" data-element="none" aria-label="Без элемента">×</button>
-            </div>
-          </div>
-        </section>
-
-        <section class="panel-section">
-          <div class="panel-section-head">
-            <div>
-              <div class="eyebrow">color</div>
-              <h2>Подложка и загрузка</h2>
-            </div>
-          </div>
-
-          <div class="option-group">
-            <div class="group-label">Тон подложки</div>
-            <div class="swatch-row">
-              <button class="swatch" type="button" data-bg="#070911" style="--swatch:#070911" aria-label="Темный графит"></button>
-              <button class="swatch" type="button" data-bg="#162d4d" style="--swatch:#162d4d" aria-label="Синий"></button>
-              <button class="swatch" type="button" data-bg="#2a2351" style="--swatch:#2a2351" aria-label="Индиго"></button>
-              <button class="swatch" type="button" data-bg="#20355b" style="--swatch:#20355b" aria-label="Сталь"></button>
-            </div>
-          </div>
-
-          <div class="upload-row">
-            <label class="secondary-button" for="backgroundUpload">Загрузить фон</label>
-            <input id="backgroundUpload" type="file" accept="image/*" hidden>
-            <button class="ghost-button ghost-button-small" id="removeBackgroundButton" type="button">Убрать фото</button>
-          </div>
-        </section>
-
-        <section class="panel-section panel-section-muted">
-          <div class="panel-section-head">
-            <div>
-              <div class="eyebrow">actions</div>
-              <h2>Точечные правки</h2>
-            </div>
-          </div>
-          <div class="action-stack">
-            <button class="secondary-button" id="addTextButton" type="button">Переименовать серверный заголовок</button>
-            <button class="secondary-button" id="addElementButton" type="button">Переключить элемент</button>
-            <button class="secondary-button" id="formatButton" type="button">Переключить стиль</button>
-          </div>
+          <label class="field">
+            <span>Нижняя строка</span>
+            <input id="footerInput" type="text" maxlength="60" value="скачать игру в тгк @crmp_zyro">
+          </label>
         </section>
       </aside>
     </main>
