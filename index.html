@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zyro Russia | Конструктор медиа-промокодов</title>
+  <title>ZyroStudio | Конструктор медиа-промокодов</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
@@ -24,6 +24,8 @@
         <button class="icon-button active" id="gridButton" type="button" aria-label="Сетка">&#9638;</button>
         <button class="icon-button" id="alignButton" type="button" aria-label="Выравнивание">&#8801;</button>
         <button class="icon-button" id="strokeButton" type="button" aria-label="Обводка">&#9998;</button>
+        <button class="icon-button" id="shapeActionButton" type="button" aria-label="Фигуры">&#9671;</button>
+        <button class="icon-button" id="folderButton" type="button" aria-label="Папка">&#128193;</button>
       </div>
 
       <div class="top-actions">
@@ -36,6 +38,11 @@
 
     <main class="workspace-layout">
       <section class="workspace">
+        <div class="page-tabs">
+          <button class="page-tab active" type="button">Страница 1</button>
+          <button class="page-add" type="button">+</button>
+        </div>
+
         <div class="workspace-stage">
           <div class="canvas-wrap">
             <canvas id="promoCanvas" width="1400" height="780"></canvas>
@@ -62,10 +69,10 @@
             <span class="block-help">?</span>
           </div>
           <div class="preset-grid">
-            <button class="chip-button active" type="button" data-style="style1">Стиль 1</button>
-            <button class="chip-button" type="button" data-style="style2">Стиль 2</button>
-            <button class="chip-button" type="button" data-style="style3">Стиль 3</button>
-            <button class="chip-button" type="button" data-style="style4">Стиль 4</button>
+            <button class="chip-button active" type="button" data-style="style1">&#10022;&nbsp;Стиль 1</button>
+            <button class="chip-button" type="button" data-style="style2">&#10022;&nbsp;Стиль 2</button>
+            <button class="chip-button" type="button" data-style="style3">&#10022;&nbsp;Стиль 3</button>
+            <button class="chip-button" type="button" data-style="style4">&#10022;&nbsp;Стиль 4</button>
           </div>
         </section>
 
@@ -86,7 +93,7 @@
             <span class="block-title">Фигуры</span>
             <span class="block-help">?</span>
           </div>
-          <div class="icon-grid">
+          <div class="icon-grid icon-grid-shapes">
             <button class="shape-button active" type="button" data-shape="square" aria-label="Квадрат"><span class="shape square"></span></button>
             <button class="shape-button" type="button" data-shape="circle" aria-label="Круг"><span class="shape circle"></span></button>
             <button class="shape-button" type="button" data-shape="triangle" aria-label="Треугольник"><span class="shape triangle"></span></button>
@@ -100,12 +107,13 @@
             <span class="block-title">Элементы</span>
             <span class="block-help">?</span>
           </div>
-          <div class="icon-grid">
-            <button class="element-button active" type="button" data-element="bear" aria-label="Логотип медведя">🐻</button>
-            <button class="element-button" type="button" data-element="spark" aria-label="Вспышка">✦</button>
-            <button class="element-button" type="button" data-element="shield" aria-label="Щит">🛡</button>
-            <button class="element-button" type="button" data-element="crown" aria-label="Корона">♛</button>
-            <button class="element-button" type="button" data-element="none" aria-label="Без элемента">□</button>
+          <div class="icon-grid icon-grid-elements">
+            <button class="element-button active is-graphic" type="button" data-element="logo" aria-label="Логотип Zyro"><img src="assets/logo.png" alt="Zyro logo"></button>
+            <button class="element-button is-emoji" type="button" data-element="bear" aria-label="Волк">🐺</button>
+            <button class="element-button is-emoji" type="button" data-element="spark" aria-label="Луна">🌕</button>
+            <button class="element-button is-emoji" type="button" data-element="shield" aria-label="Космонавт">👨‍🚀</button>
+            <button class="element-button is-emoji" type="button" data-element="crown" aria-label="Силуэт">🦇</button>
+            <button class="element-button" type="button" data-element="none" aria-label="Сетка">⌗</button>
           </div>
         </section>
 
@@ -115,17 +123,17 @@
             <span class="block-help">?</span>
           </div>
           <div class="layer-list">
-            <div class="layer-item">
-              <span>Стиль</span>
-              <span class="layer-actions">&#128065;</span>
+            <div class="layer-item active">
+              <span class="layer-name">Логотип Zyro</span>
+              <span class="layer-actions">&#128274;&nbsp;&nbsp;&#128065;&nbsp;&nbsp;<span class="danger-icon">&#128465;</span></span>
             </div>
             <div class="layer-item">
-              <span>Текст</span>
-              <span class="layer-actions">&#128065;</span>
+              <span class="layer-name">Стиль 5</span>
+              <span class="layer-actions">&#128274;&nbsp;&nbsp;&#128065;&nbsp;&nbsp;<span class="danger-icon">&#128465;</span></span>
             </div>
             <div class="layer-item">
-              <span>Фон</span>
-              <span class="layer-actions">&#128065;</span>
+              <span class="layer-name">Фон</span>
+              <span class="layer-actions">&#128274;&nbsp;&nbsp;&#128065;</span>
             </div>
           </div>
         </section>
@@ -141,8 +149,46 @@
             <button class="swatch" type="button" data-bg="#2a2351" style="--swatch:#2a2351" aria-label="Фиолетовый"></button>
             <button class="swatch" type="button" data-bg="#20355b" style="--swatch:#20355b" aria-label="Сине-серый"></button>
           </div>
-          <label class="upload-button" for="backgroundUpload">Загрузить фоновое фото</label>
+          <label class="upload-button" for="backgroundUpload">&#128247;&nbsp;&nbsp;Загрузить фоновое фото</label>
           <input id="backgroundUpload" type="file" accept="image/*" hidden>
+        </section>
+
+        <section class="settings-block">
+          <div class="block-header">
+            <span class="block-title">Загрузить элемент (PNG/ZIP)</span>
+            <span class="block-help">?</span>
+          </div>
+          <label class="upload-button" for="elementUpload">&#128444;&nbsp;&nbsp;Загрузить элемент</label>
+          <input id="elementUpload" type="file" accept=".png,.zip,image/png" hidden>
+        </section>
+
+        <section class="settings-block">
+          <div class="tab-bar">
+            <button class="tab-chip active" type="button">Базовые</button>
+            <button class="tab-chip" type="button">Фильтры</button>
+          </div>
+        </section>
+
+        <section class="settings-block">
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label" for="positionXInput">Позиция X (px)</label>
+              <input id="positionXInput" type="text" value="960">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="positionYInput">Позиция Y (px)</label>
+              <input id="positionYInput" type="text" value="540">
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="rotationInput">Поворот (град.)</label>
+            <input id="rotationInput" type="text" value="0">
+          </div>
+          <div class="field-group">
+            <label class="field-label slider-label" for="opacityInput">Прозрачность <span>100%</span></label>
+            <input id="opacityInput" type="range" min="0" max="100" value="100">
+          </div>
+          <button class="danger-button" id="removeBackgroundButton" type="button">&#10024;&nbsp;&nbsp;Удалить фон</button>
         </section>
 
         <section class="settings-block">
@@ -152,7 +198,7 @@
           </div>
           <div class="field-group">
             <label class="field-label" for="footerInput">Нижняя строка</label>
-            <input id="footerInput" type="text" value="скачать игру в тгк - @crmp_rage" maxlength="60">
+            <input id="footerInput" type="text" value="скачать игру в тгк - @zyro_media" maxlength="60">
           </div>
         </section>
       </aside>

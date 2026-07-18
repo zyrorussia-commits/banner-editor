@@ -1,71 +1,85 @@
 const canvas = document.getElementById("promoCanvas");
 const ctx = canvas.getContext("2d");
 
+const logoImage = new Image();
+logoImage.src = "assets/logo.png";
+
 const state = {
   style: "style1",
   server: "Москва",
   shape: "square",
-  element: "bear",
+  element: "logo",
   showBackground: true,
   backgroundColor: "#070911",
   promoCode: "/promo > 2",
-  footerText: "скачать игру в тгк - @crmp_rage",
+  footerText: "скачать игру в тгк - @zyro_media",
   customTitle: "",
   uploadedImage: null
 };
 
 const stylePresets = {
   style1: {
-    backgroundTop: "#161d39",
-    backgroundBottom: "#173258",
-    splashMain: "rgba(255, 19, 19, 0.92)",
-    splashDark: "rgba(0, 0, 0, 0.94)",
+    name: "Стиль 1",
+    backgroundTop: "#191115",
+    backgroundBottom: "#4a0f15",
     accent: "#ff2950",
+    splash: "rgba(255, 28, 68, 0.92)",
+    shadow: "rgba(25, 0, 0, 0.94)",
     textMain: "#ffffff",
-    textAccent: "#ff4a72"
+    textAccentA: "#ffd8df",
+    textAccentB: "#ff315d",
+    frame: "rgba(255, 98, 130, 0.36)",
+    logoGlow: "rgba(255, 72, 108, 0.48)",
+    pattern: "slashes"
   },
   style2: {
-    backgroundTop: "#171421",
-    backgroundBottom: "#2a1e43",
-    splashMain: "rgba(119, 54, 255, 0.88)",
-    splashDark: "rgba(8, 8, 16, 0.92)",
-    accent: "#8a58ff",
-    textMain: "#ffffff",
-    textAccent: "#9a6bff"
+    name: "Стиль 2",
+    backgroundTop: "#131626",
+    backgroundBottom: "#26114a",
+    accent: "#8c5bff",
+    splash: "rgba(150, 84, 255, 0.88)",
+    shadow: "rgba(7, 0, 22, 0.92)",
+    textMain: "#faf7ff",
+    textAccentA: "#efe0ff",
+    textAccentB: "#8b5dff",
+    frame: "rgba(153, 109, 255, 0.34)",
+    logoGlow: "rgba(129, 88, 255, 0.42)",
+    pattern: "rings"
   },
   style3: {
-    backgroundTop: "#0c1824",
-    backgroundBottom: "#143c4e",
-    splashMain: "rgba(0, 201, 255, 0.88)",
-    splashDark: "rgba(0, 14, 18, 0.92)",
-    accent: "#31d8ff",
-    textMain: "#ebffff",
-    textAccent: "#59ecff"
+    name: "Стиль 3",
+    backgroundTop: "#081c2d",
+    backgroundBottom: "#114960",
+    accent: "#35d8ff",
+    splash: "rgba(36, 205, 255, 0.9)",
+    shadow: "rgba(0, 14, 28, 0.9)",
+    textMain: "#f0fdff",
+    textAccentA: "#d2fcff",
+    textAccentB: "#4fe7ff",
+    frame: "rgba(90, 226, 255, 0.32)",
+    logoGlow: "rgba(78, 229, 255, 0.4)",
+    pattern: "grid"
   },
   style4: {
-    backgroundTop: "#1f1712",
-    backgroundBottom: "#453117",
-    splashMain: "rgba(255, 140, 36, 0.9)",
-    splashDark: "rgba(15, 10, 5, 0.92)",
-    accent: "#ff9f2e",
-    textMain: "#fffaf2",
-    textAccent: "#ffb556"
+    name: "Стиль 4",
+    backgroundTop: "#23180f",
+    backgroundBottom: "#5b3413",
+    accent: "#ffaf39",
+    splash: "rgba(255, 167, 56, 0.88)",
+    shadow: "rgba(28, 14, 0, 0.92)",
+    textMain: "#fff7eb",
+    textAccentA: "#fff0ce",
+    textAccentB: "#ffb144",
+    frame: "rgba(255, 192, 104, 0.34)",
+    logoGlow: "rgba(255, 172, 67, 0.42)",
+    pattern: "beams"
   }
 };
 
 const serverMeta = {
-  "Москва": {
-    title: "SERVER: MOSCOW",
-    origin: "CRMP MOSCOW"
-  },
-  "Питер": {
-    title: "SERVER: PITER",
-    origin: "CRMP SAINT-P"
-  },
-  "Екатеринбург": {
-    title: "SERVER: EKB",
-    origin: "CRMP EKB"
-  }
+  "Москва": { title: "MOSCOW", label: "CAPITAL DISTRICT" },
+  "Питер": { title: "PITER", label: "NORTHERN LINE" },
+  "Екатеринбург": { title: "EKB", label: "URAL CORE" }
 };
 
 const els = {
@@ -86,13 +100,9 @@ const els = {
   backgroundUpload: document.getElementById("backgroundUpload")
 };
 
-function clamp(value, min, max) {
-  return Math.min(max, Math.max(min, value));
-}
-
 function hexToRgb(hex) {
-  const raw = hex.replace("#", "");
-  const parsed = Number.parseInt(raw, 16);
+  const value = hex.replace("#", "");
+  const parsed = Number.parseInt(value, 16);
   return {
     r: (parsed >> 16) & 255,
     g: (parsed >> 8) & 255,
@@ -129,112 +139,97 @@ function drawBackground(preset) {
   const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
   gradient.addColorStop(0, preset.backgroundTop);
   gradient.addColorStop(1, preset.backgroundBottom);
-  ctx.fillStyle = state.uploadedImage ? state.backgroundColor : gradient;
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = rgba(state.backgroundColor, 0.32);
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   if (state.uploadedImage) {
     ctx.save();
-    ctx.globalAlpha = 0.48;
+    ctx.globalAlpha = 0.28;
     ctx.drawImage(state.uploadedImage, 0, 0, canvas.width, canvas.height);
     ctx.restore();
-
-    const overlay = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    overlay.addColorStop(0, rgba(state.backgroundColor, 0.78));
-    overlay.addColorStop(1, rgba("#07111d", 0.72));
-    ctx.fillStyle = overlay;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  } else {
-    ctx.fillStyle = rgba(state.backgroundColor, 0.35);
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 }
 
-function drawBackdropCloud(preset) {
+function drawPattern(preset) {
   ctx.save();
+  ctx.strokeStyle = preset.frame;
+  ctx.fillStyle = preset.frame;
 
-  const coreGradient = ctx.createRadialGradient(680, 365, 40, 680, 365, 430);
-  coreGradient.addColorStop(0, "rgba(255,255,255,0.2)");
-  coreGradient.addColorStop(0.18, preset.splashMain);
-  coreGradient.addColorStop(0.46, preset.splashDark);
-  coreGradient.addColorStop(1, "rgba(0,0,0,0)");
-  ctx.fillStyle = coreGradient;
-  ctx.beginPath();
-  ctx.ellipse(690, 372, 420, 205, -0.05, 0, Math.PI * 2);
-  ctx.fill();
-
-  for (let i = 0; i < 70; i += 1) {
-    const angle = Math.random() * Math.PI * 2;
-    const radiusX = 370 + Math.random() * 180;
-    const radiusY = 115 + Math.random() * 140;
-    const x = 690 + Math.cos(angle) * radiusX;
-    const y = 372 + Math.sin(angle) * radiusY;
-    const size = 4 + Math.random() * 18;
-    ctx.fillStyle = Math.random() > 0.4 ? preset.splashMain : "rgba(0,0,0,0.9)";
-    ctx.beginPath();
-    ctx.arc(x, y, size, 0, Math.PI * 2);
-    ctx.fill();
+  if (preset.pattern === "slashes") {
+    ctx.lineWidth = 2;
+    for (let i = -200; i < 1600; i += 90) {
+      ctx.beginPath();
+      ctx.moveTo(i, 0);
+      ctx.lineTo(i + 240, 780);
+      ctx.stroke();
+    }
   }
 
-  ctx.strokeStyle = "rgba(0,0,0,0.75)";
-  ctx.lineWidth = 8;
-  [528, 612, 1006].forEach((x, index) => {
-    ctx.beginPath();
-    ctx.moveTo(x, 525 + index * 8);
-    ctx.lineTo(x + (index === 1 ? -8 : 4), 650 + index * 18);
-    ctx.stroke();
-  });
-
-  ctx.restore();
-}
-
-function drawShapeOverlay(preset) {
-  ctx.save();
-  ctx.globalAlpha = 0.22;
-  ctx.fillStyle = rgba(preset.accent, 0.4);
-  ctx.strokeStyle = rgba("#ffffff", 0.18);
-  ctx.lineWidth = 3;
-
-  if (state.shape === "square") {
-    ctx.fillRect(325, 198, 160, 160);
-    ctx.strokeRect(325, 198, 160, 160);
+  if (preset.pattern === "rings") {
+    ctx.lineWidth = 2;
+    [210, 280, 350].forEach((radius) => {
+      ctx.beginPath();
+      ctx.arc(1040, 160, radius, 0.15 * Math.PI, 1.4 * Math.PI);
+      ctx.stroke();
+    });
   }
 
-  if (state.shape === "circle") {
-    ctx.beginPath();
-    ctx.arc(392, 275, 88, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
+  if (preset.pattern === "grid") {
+    ctx.globalAlpha = 0.3;
+    for (let x = 0; x < canvas.width; x += 60) {
+      ctx.fillRect(x, 0, 1, canvas.height);
+    }
+    for (let y = 0; y < canvas.height; y += 60) {
+      ctx.fillRect(0, y, canvas.width, 1);
+    }
   }
 
-  if (state.shape === "triangle") {
-    ctx.beginPath();
-    ctx.moveTo(390, 162);
-    ctx.lineTo(287, 358);
-    ctx.lineTo(492, 358);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-  }
-
-  if (state.shape === "star") {
-    drawStar(392, 275, 95, 42, 5);
-    ctx.fill();
-    ctx.stroke();
-  }
-
-  if (state.shape === "grid") {
-    for (let row = 0; row < 5; row += 1) {
-      for (let col = 0; col < 5; col += 1) {
-        ctx.fillRect(300 + col * 36, 190 + row * 36, 22, 22);
-      }
+  if (preset.pattern === "beams") {
+    ctx.globalAlpha = 0.28;
+    for (let i = 0; i < 9; i += 1) {
+      ctx.beginPath();
+      ctx.moveTo(150 + i * 150, -40);
+      ctx.lineTo(270 + i * 150, -40);
+      ctx.lineTo(40 + i * 130, 820);
+      ctx.lineTo(-20 + i * 130, 820);
+      ctx.closePath();
+      ctx.fill();
     }
   }
 
   ctx.restore();
 }
 
+function drawCentralSplash(preset) {
+  ctx.save();
+  const splash = ctx.createRadialGradient(735, 380, 60, 735, 380, 420);
+  splash.addColorStop(0, "rgba(255,255,255,0.12)");
+  splash.addColorStop(0.22, preset.splash);
+  splash.addColorStop(0.55, preset.shadow);
+  splash.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = splash;
+  ctx.beginPath();
+  ctx.ellipse(770, 390, 450, 240, 0.08, 0, Math.PI * 2);
+  ctx.fill();
+
+  for (let i = 0; i < 64; i += 1) {
+    const x = 430 + Math.random() * 620;
+    const y = 170 + Math.random() * 360;
+    const radius = 6 + Math.random() * 30;
+    ctx.fillStyle = Math.random() > 0.44 ? preset.splash : preset.shadow;
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.restore();
+}
+
 function drawStar(cx, cy, outerRadius, innerRadius, points) {
-  let rotation = Math.PI / 2 * 3;
+  let rotation = (Math.PI / 2) * 3;
   const step = Math.PI / points;
   ctx.beginPath();
   ctx.moveTo(cx, cy - outerRadius);
@@ -248,148 +243,250 @@ function drawStar(cx, cy, outerRadius, innerRadius, points) {
   ctx.closePath();
 }
 
-function drawElementBadge(preset) {
-  if (state.element === "none") {
+function drawShapeOverlay(preset) {
+  ctx.save();
+  ctx.globalAlpha = 0.22;
+  ctx.fillStyle = rgba(preset.accent, 0.58);
+  ctx.strokeStyle = rgba("#ffffff", 0.2);
+  ctx.lineWidth = 3;
+
+  if (state.shape === "square") {
+    ctx.fillRect(210, 175, 210, 210);
+    ctx.strokeRect(210, 175, 210, 210);
+  }
+
+  if (state.shape === "circle") {
+    ctx.beginPath();
+    ctx.arc(315, 280, 118, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  if (state.shape === "triangle") {
+    ctx.beginPath();
+    ctx.moveTo(315, 120);
+    ctx.lineTo(185, 395);
+    ctx.lineTo(445, 395);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  if (state.shape === "star") {
+    drawStar(320, 280, 122, 54, 5);
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  if (state.shape === "grid") {
+    for (let row = 0; row < 5; row += 1) {
+      for (let col = 0; col < 5; col += 1) {
+        ctx.fillRect(190 + col * 54, 150 + row * 54, 34, 34);
+      }
+    }
+  }
+
+  ctx.restore();
+}
+
+function drawLogo(preset) {
+  if (!logoImage.complete || !logoImage.naturalWidth) {
     return;
   }
 
   ctx.save();
-  ctx.translate(365, 250);
-  ctx.shadowColor = "rgba(0,0,0,0.45)";
-  ctx.shadowBlur = 18;
-
-  if (state.element === "bear") {
-    ctx.fillStyle = "#ffffff";
-    ctx.beginPath();
-    ctx.moveTo(-65, 18);
-    ctx.lineTo(-22, -42);
-    ctx.lineTo(44, -28);
-    ctx.lineTo(72, 6);
-    ctx.lineTo(36, 54);
-    ctx.lineTo(-26, 54);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.fillStyle = "#111317";
-    ctx.beginPath();
-    ctx.moveTo(-32, -8);
-    ctx.lineTo(6, -28);
-    ctx.lineTo(26, -8);
-    ctx.lineTo(-8, 10);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.strokeStyle = preset.accent;
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.moveTo(-52, -2);
-    ctx.lineTo(-32, -24);
-    ctx.lineTo(-16, -10);
-    ctx.stroke();
-  }
-
-  if (state.element === "spark") {
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "800 96px Manrope, sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("✦", 0, 34);
-  }
-
-  if (state.element === "shield") {
-    ctx.fillStyle = "#ffffff";
-    ctx.beginPath();
-    ctx.moveTo(0, -54);
-    ctx.lineTo(46, -30);
-    ctx.lineTo(32, 42);
-    ctx.lineTo(0, 62);
-    ctx.lineTo(-32, 42);
-    ctx.lineTo(-46, -30);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.fillStyle = preset.accent;
-    ctx.fillRect(-6, -12, 12, 44);
-    ctx.fillRect(-24, 4, 48, 12);
-  }
-
-  if (state.element === "crown") {
-    ctx.fillStyle = "#ffffff";
-    ctx.beginPath();
-    ctx.moveTo(-58, 40);
-    ctx.lineTo(-46, -16);
-    ctx.lineTo(-14, 6);
-    ctx.lineTo(0, -34);
-    ctx.lineTo(14, 6);
-    ctx.lineTo(46, -16);
-    ctx.lineTo(58, 40);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.fillStyle = preset.accent;
-    ctx.fillRect(-54, 40, 108, 10);
-  }
-
+  ctx.shadowColor = preset.logoGlow;
+  ctx.shadowBlur = 42;
+  ctx.globalAlpha = 0.98;
+  ctx.drawImage(logoImage, 24, 60, 860, 560);
   ctx.restore();
 }
 
-function drawTexts(preset) {
+function drawBearMark(preset) {
+  ctx.save();
+  ctx.translate(280, 270);
+  ctx.shadowColor = preset.logoGlow;
+  ctx.shadowBlur = 24;
+
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.moveTo(-90, 12);
+  ctx.lineTo(-18, -78);
+  ctx.lineTo(76, -58);
+  ctx.lineTo(112, -4);
+  ctx.lineTo(64, 82);
+  ctx.lineTo(-40, 82);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = "#111317";
+  ctx.beginPath();
+  ctx.moveTo(-42, -12);
+  ctx.lineTo(8, -46);
+  ctx.lineTo(44, -8);
+  ctx.lineTo(-6, 20);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.strokeStyle = preset.accent;
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.moveTo(-72, 4);
+  ctx.lineTo(-44, -32);
+  ctx.lineTo(-14, -10);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawMoonMark(preset) {
+  ctx.save();
+  ctx.translate(290, 265);
+  ctx.shadowColor = preset.logoGlow;
+  ctx.shadowBlur = 26;
+  ctx.fillStyle = "#ffe2a3";
+  ctx.beginPath();
+  ctx.arc(0, 0, 88, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalCompositeOperation = "destination-out";
+  ctx.beginPath();
+  ctx.arc(32, -16, 82, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawShieldMark(preset) {
+  ctx.save();
+  ctx.translate(292, 260);
+  ctx.shadowColor = preset.logoGlow;
+  ctx.shadowBlur = 20;
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.moveTo(0, -96);
+  ctx.lineTo(76, -52);
+  ctx.lineTo(52, 62);
+  ctx.lineTo(0, 112);
+  ctx.lineTo(-52, 62);
+  ctx.lineTo(-76, -52);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = preset.accent;
+  ctx.fillRect(-10, -30, 20, 86);
+  ctx.fillRect(-40, 8, 80, 18);
+  ctx.restore();
+}
+
+function drawBatMark(preset) {
+  ctx.save();
+  ctx.translate(292, 270);
+  ctx.shadowColor = preset.logoGlow;
+  ctx.shadowBlur = 20;
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.moveTo(-118, 10);
+  ctx.quadraticCurveTo(-76, -52, -24, -22);
+  ctx.lineTo(0, -68);
+  ctx.lineTo(24, -22);
+  ctx.quadraticCurveTo(76, -52, 118, 10);
+  ctx.lineTo(54, -6);
+  ctx.lineTo(26, 44);
+  ctx.lineTo(0, 10);
+  ctx.lineTo(-26, 44);
+  ctx.lineTo(-54, -6);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawElement(preset) {
+  if (state.element === "none") {
+    return;
+  }
+
+  if (state.element === "logo") {
+    drawLogo(preset);
+    return;
+  }
+
+  if (state.element === "bear") {
+    drawBearMark(preset);
+    return;
+  }
+
+  if (state.element === "spark") {
+    drawMoonMark(preset);
+    return;
+  }
+
+  if (state.element === "shield") {
+    drawShieldMark(preset);
+    return;
+  }
+
+  if (state.element === "crown") {
+    drawBatMark(preset);
+  }
+}
+
+function drawTextBlock(preset) {
   const meta = serverMeta[state.server];
-  const titleText = state.customTitle || meta.title;
+  const title = (state.customTitle || meta.title).toUpperCase();
 
   ctx.save();
   ctx.textBaseline = "top";
 
-  ctx.font = "800 62px Manrope, sans-serif";
-  ctx.fillStyle = "#ff2b24";
-  ctx.fillText(state.promoCode, 615, 158);
+  ctx.font = "800 58px Manrope, sans-serif";
+  ctx.fillStyle = preset.textAccentB;
+  ctx.fillText(state.promoCode, 740, 112);
 
-  ctx.shadowColor = "rgba(0,0,0,0.42)";
-  ctx.shadowBlur = 14;
-  ctx.font = "900 108px Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif";
+  ctx.font = "900 112px Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif";
+  ctx.shadowColor = "rgba(0, 0, 0, 0.38)";
+  ctx.shadowBlur = 12;
   ctx.fillStyle = preset.textMain;
-  ctx.fillText("SERVER:", 420, 240);
+  ctx.fillText("SERVER:", 610, 250);
 
-  const measured = ctx.measureText("SERVER:");
-  const mainX = 420 + measured.width + 18;
+  const serverX = 610 + ctx.measureText("SERVER:").width + 22;
+  const gradient = ctx.createLinearGradient(serverX, 230, serverX, 390);
+  gradient.addColorStop(0, preset.textAccentA);
+  gradient.addColorStop(0.55, preset.textAccentB);
+  gradient.addColorStop(1, preset.textAccentB);
+  ctx.fillStyle = gradient;
+  ctx.fillText(title, serverX, 250);
 
-  const accentGradient = ctx.createLinearGradient(mainX, 210, mainX, 358);
-  accentGradient.addColorStop(0, "#ff9bb1");
-  accentGradient.addColorStop(0.52, preset.textAccent);
-  accentGradient.addColorStop(1, "#d60043");
-  ctx.fillStyle = accentGradient;
-  ctx.fillText(titleText.replace("SERVER: ", ""), mainX, 240);
+  ctx.shadowBlur = 8;
+  ctx.font = "700 28px Manrope, sans-serif";
+  ctx.fillStyle = "rgba(255,255,255,0.78)";
+  ctx.fillText(meta.label, 614, 376);
 
-  ctx.shadowBlur = 10;
-  ctx.font = "800 52px Manrope, sans-serif";
-  ctx.fillStyle = "#ff3b30";
-  ctx.fillText(state.footerText, 370, 492);
+  ctx.font = "800 42px Manrope, sans-serif";
+  ctx.fillStyle = preset.textAccentB;
+  ctx.fillText(state.footerText, 356, 560);
 
   ctx.shadowBlur = 0;
-  ctx.font = "700 14px Manrope, sans-serif";
-  ctx.fillStyle = "rgba(255,255,255,0.12)";
-  ctx.fillText("ZYRO RUSSIA MEDIA", 1250, 22);
+  ctx.font = "700 18px Manrope, sans-serif";
+  ctx.fillStyle = "rgba(255,255,255,0.34)";
+  ctx.fillText(`ZYROSTUDIO • ${stylePresets[state.style].name.toUpperCase()}`, 970, 34);
 
   ctx.restore();
 }
 
-function drawForegroundGlow(preset) {
+function drawFrame(preset) {
   ctx.save();
-  const glow = ctx.createRadialGradient(690, 362, 80, 690, 362, 300);
-  glow.addColorStop(0, rgba(preset.accent, 0.28));
-  glow.addColorStop(1, "rgba(0,0,0,0)");
-  ctx.fillStyle = glow;
-  ctx.fillRect(240, 130, 900, 470);
+  ctx.strokeStyle = preset.frame;
+  ctx.lineWidth = 2;
+  ctx.strokeRect(32, 32, canvas.width - 64, canvas.height - 64);
+  ctx.strokeRect(56, 56, canvas.width - 112, canvas.height - 112);
   ctx.restore();
 }
 
 function drawNoise() {
   ctx.save();
-  ctx.globalAlpha = 0.07;
-  for (let i = 0; i < 2400; i += 1) {
+  ctx.globalAlpha = 0.06;
+  for (let i = 0; i < 2600; i += 1) {
     const x = Math.random() * canvas.width;
     const y = Math.random() * canvas.height;
     const shade = Math.random() > 0.5 ? 255 : 0;
-    ctx.fillStyle = `rgba(${shade},${shade},${shade},${Math.random()})`;
+    ctx.fillStyle = `rgba(${shade}, ${shade}, ${shade}, ${Math.random()})`;
     ctx.fillRect(x, y, 1, 1);
   }
   ctx.restore();
@@ -400,58 +497,13 @@ function renderCanvas() {
   const preset = stylePresets[state.style];
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBackground(preset);
-  drawBackdropCloud(preset);
+  drawPattern(preset);
+  drawCentralSplash(preset);
   drawShapeOverlay(preset);
-  drawElementBadge(preset);
-  drawForegroundGlow(preset);
-  drawTexts(preset);
+  drawElement(preset);
+  drawTextBlock(preset);
+  drawFrame(preset);
   drawNoise();
-}
-
-function downloadPng() {
-  const link = document.createElement("a");
-  const serverName = state.server.toLowerCase().replace(/[^a-zа-я0-9]+/gi, "-");
-  link.href = canvas.toDataURL("image/png");
-  link.download = `zyro-media-${serverName}.png`;
-  link.click();
-}
-
-function randomizeScene() {
-  state.style = randomFrom(Object.keys(stylePresets));
-  state.server = randomFrom(Object.keys(serverMeta));
-  state.shape = randomFrom(["square", "circle", "triangle", "star", "grid"]);
-  state.element = randomFrom(["bear", "spark", "shield", "crown"]);
-  state.backgroundColor = randomFrom(["#070911", "#162d4d", "#2a2351", "#20355b"]);
-
-  const promoVariants = ["/promo > 2", "/promo > 5", "/media +promo", "/bonus > 3"];
-  const footerVariants = [
-    "скачать игру в тгк - @crmp_rage",
-    "подключайся прямо сейчас - @zyro_russia",
-    "медиа набор и розыгрыши - @zyro_media",
-    "промокоды и бонусы - @zyro_news"
-  ];
-
-  state.promoCode = randomFrom(promoVariants);
-  state.footerText = randomFrom(footerVariants);
-
-  syncControls();
-  renderCanvas();
-}
-
-function resetScene() {
-  state.style = "style1";
-  state.server = "Москва";
-  state.shape = "square";
-  state.element = "bear";
-  state.showBackground = true;
-  state.backgroundColor = "#070911";
-  state.promoCode = "/promo > 2";
-  state.footerText = "скачать игру в тгк - @crmp_rage";
-  state.customTitle = "";
-  state.uploadedImage = null;
-  els.backgroundUpload.value = "";
-  syncControls();
-  renderCanvas();
 }
 
 function syncControls() {
@@ -465,6 +517,47 @@ function syncControls() {
   els.backgroundToggle.setAttribute("aria-pressed", String(state.showBackground));
   els.promoCodeInput.value = state.promoCode;
   els.footerInput.value = state.footerText;
+}
+
+function downloadPng() {
+  const link = document.createElement("a");
+  const serverName = state.server.toLowerCase().replace(/[^a-zа-я0-9]+/gi, "-");
+  link.href = canvas.toDataURL("image/png");
+  link.download = `zyrostudio-${serverName}-${state.style}.png`;
+  link.click();
+}
+
+function randomizeScene() {
+  state.style = randomFrom(Object.keys(stylePresets));
+  state.server = randomFrom(Object.keys(serverMeta));
+  state.shape = randomFrom(["square", "circle", "triangle", "star", "grid"]);
+  state.element = randomFrom(["logo", "bear", "spark", "shield", "crown"]);
+  state.backgroundColor = randomFrom(["#070911", "#162d4d", "#2a2351", "#20355b"]);
+  state.promoCode = randomFrom(["/promo > 2", "/promo > 5", "/media +bonus", "/bonus > 3"]);
+  state.footerText = randomFrom([
+    "скачать игру в тгк - @zyro_media",
+    "подключайся прямо сейчас - @zyro_russia",
+    "медиа набор и розыгрыши - @zyro_media",
+    "промокоды и бонусы - @zyro_news"
+  ]);
+  syncControls();
+  renderCanvas();
+}
+
+function resetScene() {
+  state.style = "style1";
+  state.server = "Москва";
+  state.shape = "square";
+  state.element = "logo";
+  state.showBackground = true;
+  state.backgroundColor = "#070911";
+  state.promoCode = "/promo > 2";
+  state.footerText = "скачать игру в тгк - @zyro_media";
+  state.customTitle = "";
+  state.uploadedImage = null;
+  els.backgroundUpload.value = "";
+  syncControls();
+  renderCanvas();
 }
 
 function bindEvents() {
@@ -524,22 +617,22 @@ function bindEvents() {
   });
 
   els.footerInput.addEventListener("input", (event) => {
-    state.footerText = event.target.value || "скачать игру в тгк - @crmp_rage";
+    state.footerText = event.target.value || "скачать игру в тгк - @zyro_media";
     renderCanvas();
   });
 
   els.addTextButton.addEventListener("click", () => {
-    const nextTitle = window.prompt("Введи крупный заголовок сервера", state.customTitle || serverMeta[state.server].title.replace("SERVER: ", ""));
+    const current = state.customTitle || serverMeta[state.server].title;
+    const nextTitle = window.prompt("Введи название сервера крупным текстом", current);
     if (nextTitle === null) {
       return;
     }
-    const cleaned = nextTitle.trim();
-    state.customTitle = cleaned ? `SERVER: ${cleaned.toUpperCase()}` : "";
+    state.customTitle = nextTitle.trim().toUpperCase();
     renderCanvas();
   });
 
   els.addElementButton.addEventListener("click", () => {
-    const order = ["bear", "spark", "shield", "crown", "none"];
+    const order = ["logo", "bear", "spark", "shield", "crown", "none"];
     const index = order.indexOf(state.element);
     state.element = order[(index + 1) % order.length];
     syncControls();
@@ -569,5 +662,6 @@ function bindEvents() {
   });
 }
 
+logoImage.addEventListener("load", renderCanvas);
 bindEvents();
 resetScene();
